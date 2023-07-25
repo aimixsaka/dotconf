@@ -36,8 +36,9 @@ if [[ -z "$disk" ]]; then
     error "Cannot find bak disk"
 fi
 
-cryptsetup open "$disk" bak
-mount /dev/mapper/bak /bakroot
+# crypt open and mount if not yet
+[[ -e /dev/mapper/bak ]] || cryptsetup open "$disk" bak
+mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
 
 btrfs subvolume snapshot -r /home /.snapshots/home-new ||
     error "Unable to create subvolume /.snapshots/home-new"
