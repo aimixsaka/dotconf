@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+trap "echo 'error: Script failed: see failed command above'" ERR
 
 ##
 # INFO level message
@@ -28,6 +30,8 @@ clean() {
     [[ -e "/dev/mapper/bak" ]] && cryptsetup close bak
 }
 
+PRIVATE_DIR=/home/aimi/private
+
 
 [[ "$EUID" -ne 0 ]] && error "Please run as root"
 
@@ -36,8 +40,10 @@ if [[ -z "$disk" ]]; then
     error "Cannot find bak disk"
 fi
 
-# crypt open and mount if not yet
-[[ -e /dev/mapper/bak ]] || cryptsetup open "$disk" bak
+# open and mount cryptdevice if not yet
+if ! [[ -e /dev/mapper/bak ]]; then
+  base64 -d "$PRIVATE_DIR/pass_base64.txt" | cryptsetup open "$disk" bak
+fi
 mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
 
 btrfs subvolume snapshot -r /home /.snapshots/home-new ||
