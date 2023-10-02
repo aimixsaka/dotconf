@@ -17,6 +17,7 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 
 # intel
 # use iHD driver for vaapi
+## REMOVE ME
 export LIBVA_DRIVER_NAME=iHD
 
 # firefox for wayland
@@ -28,17 +29,17 @@ export MOZ_ENABLE_WAYLAND=1
 
 # hyprland
 # fix mouse dispear under nvidia
-export WLR_NO_HARDWARE_CURSORS=1
 #export WLR_RENDERER=vulkan
 
 ## XDG
 export XDG_CURRENT_DESKTOP=Hyprland
-export XDG_SESSION_TYPE=wayland
 export XDG_SESSION_DESKTOP=Hyprland
 
 ## fcitx5
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
+## Seems no need anymore
+# export GTK_IM_MODULE=fcitx
+# export QT_IM_MODULE=fcitx
+
 export XMODIFIERS=@im=fcitx
 
 ## QT

@@ -3,8 +3,8 @@ XDG_CONFIG_HOME=~/.config
 XDG_CACHE_HOME=~/.cache
 
 # modified, need to export
-export XDG_DATA_HOME=~/.data
-export XDG_STATE_HOME=~/.state
+export XDG_DATA_HOME=~/dotdata
+export XDG_STATE_HOME=~/dotstate
 
 # default program
 export EDITOR=nvim

@@ -1,32 +1,33 @@
 #!/bin/bash
 set -euo pipefail
-trap "echo 'error: Script failed: see failed command above'" ERR
+trap "echo 'error: Script failed: see failed message above'" ERR
 
 ##
 # INFO level message
 ##
 info() {
-    printf "\e[32mINFO: %s\n\e[0m" "$@"
+    printf "\e[32mINFO: %s\n\e[0m" "$*"
 }
 
 ##
 # WARN level message
 ##
 warn() {
-    printf "\e[33mWARN: %s\n\e[0m" "$@"
+    printf "\e[33mWARN: %s\n\e[0m" "$*"
 }
 
 ##
 # ERROR level message
 ##
 error() {
-    printf "\e[31mERROR: %s\n\e[0m" "$@"
+    printf "\e[31mERROR: %s\n\e[0m" "$*" >&2
     clean 
     exit 1
 }
 
 clean() {
-    lsblk | grep bakroot >&/dev/null && umount /bakroot 
+    # lsblk | grep bakroot >&/dev/null && umount /bakroot 
+	mountpoint -q /bakroot && umount /bakroot
     [[ -e "/dev/mapper/bak" ]] && cryptsetup close bak
 }
 
@@ -35,14 +36,14 @@ PRIVATE_DIR=/home/aimi/private
 
 [[ "$EUID" -ne 0 ]] && error "Please run as root"
 
-disk="$(blkid | grep "8b7faef1-ea61-43ca-8b5c-518b48d5ab32" | cut -d: -f1)"
+disk="$(readlink -e /dev/disk/by-uuid/8b7faef1-ea61-43ca-8b5c-518b48d5ab32)"
 if [[ -z "$disk" ]]; then
     error "Cannot find bak disk"
 fi
 
 # open and mount cryptdevice if not yet
 if ! [[ -e /dev/mapper/bak ]]; then
-  base64 -d "$PRIVATE_DIR/pass_base64.txt" | cryptsetup open "$disk" bak
+    base64 -d "$PRIVATE_DIR/pass_base64.txt" | cryptsetup open "$disk" bak
 fi
 mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
 

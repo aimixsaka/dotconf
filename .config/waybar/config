@@ -6,7 +6,7 @@
   // "width": 120, // Waybar width
   // Choose the order of the modules
   "modules-left": ["clock"],
-  "modules-center": ["wlr/workspaces", "wlr/mode", "custom/media"],
+  "modules-center": ["hyprland/workspaces", "wlr/mode", "custom/media"],
   "modules-right": ["cpu", "pulseaudio", "battery", "network", "tray"],
   // "mode": {
   // "docked": {
@@ -14,7 +14,7 @@
   // }
   // },
   // Modules configuration
-  "wlr/workspaces": {
+  "hyprland/workspaces": {
     "on-click": "activate",
     "format": "  {icon}  ",
     "format-icons": {
