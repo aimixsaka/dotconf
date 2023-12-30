@@ -37,8 +37,9 @@ export XDG_SESSION_DESKTOP=Hyprland
 
 ## fcitx5
 ## Seems no need anymore
-# export GTK_IM_MODULE=fcitx
-# export QT_IM_MODULE=fcitx
+export GTK_IM_MODULE=fcitx
+# need for app like texmacs
+export QT_IM_MODULE=fcitx
 
 export XMODIFIERS=@im=fcitx
 
