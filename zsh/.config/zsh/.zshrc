@@ -1,0 +1,216 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Created by newuser for 5.9
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+### End of Zinit's installer chunk
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+zpcompinit; zpcdreplay
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+# p10k
+zinit ice depth=1; zinit light romkatv/powerlevel10k
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light Aloxaf/fzf-tab
+zinit light zsh-users/zsh-autosuggestions
+# Snippet
+
+
+#--------------------------
+## Personal Config 
+#--------------------------
+# history tool
+eval "$(atuin init zsh)"
+
+bindkey -e
+
+## workdir
+_WORKDIR="/home/aimi/workspace"
+
+## aliases
+
+alias cl="clear -x";
+alias ws="cd ~/workspace";
+alias grep="grep --color=auto"
+alias rm="trash"
+
+alias l="ls --color=auto -l";
+alias ls="ls --color=auto";
+alias lst="ls -al --time=birth";
+alias lh="ls --color=auto -alh"
+
+# tigervnc lpi4a
+alias vnc-lpi4a='ssh -v -fL 9901:localhost:5901 lpi4a sleep 10;  vncviewer localhost:9901'
+
+# minicom
+alias lpi4a='sudo env LANG=en_US.UTF-8 minicom --color=on'
+
+# dmlive
+alias dmlive='$_WORKDIR/rust/dmlive/target/release/dmlive'
+
+# alias del="/usr/bin/env rm";
+# alias sdel="sudo del";
+
+# pacman;
+alias pas="sudo pacman -S";
+alias pasi="pacman -Si";
+alias pasii="pacman -Sii";
+alias pass="pacman -Ss";
+alias passq="sudo pacman -Ssq";
+alias paq="pacman -Q";
+alias paqi="pacman -Qi";
+alias paqii="pacman -Qii";
+alias paql="pacman -Ql";
+alias paqs="pacman -Qs";
+alias paqqs="pacman -Qqs";
+alias paqo="pacman -Qo";
+alias paqqo="pacman -Qqo";
+alias paqqdt="pacman -Qqdt";
+alias paqk="pacman -Qk";
+alias paqkk="pacman -Qkk";
+alias paclear="sudo pacman -Rns \$(pacman -Qqdt)";
+alias paf="pacman -F";
+alias pafl="pacman -Fl";
+alias pau="sudo pacman -Syu";
+alias par="sudo pacman -Rns";
+
+# paru;
+alias prs="paru -S";
+alias prss="paru -Ss";
+alias prssq="paru -Ssq";
+alias prsi="paru -Si";
+alias prq="paru -Q";
+alias prqi="paru -Qi";
+alias prqs="paru -Qs";
+alias prqqs="paru -Qqs";
+alias prr="paru -Rns";
+
+# systemd;
+alias sss="sudo systemctl start ";
+alias sdr="sudo systemctl daemon-reload";
+alias ssr="sudo systemctl restart ";
+alias ssa="systemctl status ";
+alias sse="sudo systemctl enable ";
+alias ssen="sudo systemctl enable --now";
+alias sst="sudo systemctl stop ";
+alias blc="bluetoothctl connect ";
+alias sch="systemctl hibernate";
+
+alias sua="systemctl --user status";
+alias suss="systemctl --user start";
+alias sust="systemctl --user stop";
+alias sur="systemctl --user restart";
+alias sudr="systemctl --user daemon-reload";
+alias sue="systemctl --user enable";
+alias suen="systemctl --user enable --now";
+#vim="vim -u ~/.vimrc_bak";
+
+# docker;
+alias drm="docker rm";
+alias drmi="docker rmi";
+alias dst="docker stop";
+alias dss="docker start";
+alias drs="docker restart";
+alias di="docker info";
+alias db="docker build";
+alias dp="docker ps";
+alias dpa="docker ps -a ";
+alias dil="docker image ls";
+
+# default use emacs terminal mode
+# alias emacs='emacs -nw';
+
+# xray;
+alias xsr="ssr xray.service nftables.service";
+#xst="sst xray.service nftables.service";
+alias vre="sudo $_WORKDIR/xray/xray_tool.sh vre";
+alias vtp="sudo $_WORKDIR/xray/xray_tool.sh vtp";
+alias xre="sudo $_WORKDIR/xray/xray_tool.sh xre";
+alias xtp="sudo $_WORKDIR/xray/xray_tool.sh xtp";
+alias xinfo="sudo $_WORKDIR/xray/xray_tool.sh info";
+alias xst="sudo $_WORKDIR/xray/xray_tool.sh stop";
+alias xtohk="sudo $_WORKDIR/xray/xray_tool.sh xtohk";
+alias xtojp="sudo $_WORKDIR/xray/xray_tool.sh xtojp";
+
+# NetworkManager
+alias nwc="nmcli device wifi connect";
+alias nwr="nmcli device wifi rescan";
+alias nwl="nmcli device wifi list";
+
+# some
+alias someon="$HOME/some.sh on"
+alias someoff="$HOME/some.sh off"
+
+# riscv arch
+alias rvarch="! grep -E -q '^arch=\(.*?(any|riscv64).*?\)' PKGBUILD && sed -i -E -e 's|^arch=\((.*)\)|arch=\(\1 riscv64\)|' PKGBUILD"
+alias rvunarch="sed -i -E -e 's|^arch=\((.*?)( riscv64)+\)|arch=\(\1\)|' PKGBUILD"
+
+# tmux
+alias tmux="cd $_WORKDIR && tmux"
+
+alias lg="bash ~/login.sh"
+
+# texlive
+alias tlmgr="$TEXMFDIST/scripts/texlive/tlmgr.pl --usermode"
+
+cpprun() {
+    content="$1"
+    cat <<EOF | g++ -xc++ - && { [[ -e ./a.out ]] && ./a.out && rm ./a.out }
+#include <bits/stdc++.h>
+using namespace std;
+int main() 
+{
+    $1 
+    return 0; 
+}
+EOF
+}
+
+# load autojump
+[[ -e /usr/share/autojump/autojump.zsh ]] && source /usr/share/autojump/autojump.zsh
+
+
+setopt interactivecomments
+setopt hist_ignore_all_dups
+# do not record a command to .zhistory 
+# if it starts with a sapce
+setopt hist_ignore_space
+
+# set history size
+HISTSIZE=10000000
+SAVEHIST=$HISTSIZE
+#HISTFILE=$HOME/.config/zsh/.zhistory
+
+setopt autocd
+
+# needed for true color of tmux
+export TERM=xterm-256color
+
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh

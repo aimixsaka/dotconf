@@ -1,0 +1,20 @@
+set nocompatible
+let mouse="a"
+
+filetype plugin on
+syntax on
+
+set number
+set relativenumber
+
+set autoindent
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+
+let mapleader = " "
+
+
+nnoremap <Leader><Leader> <Cmd>wa<CR>
+
