@@ -4,7 +4,7 @@
   "height": 30, // Waybar height
   "modules-left": ["clock", "custom/todo"],
   "modules-center": ["hyprland/workspaces"],
-  "modules-right": ["cpu", "memory", "pulseaudio", "network", "tray"],
+  "modules-right": ["cpu", "memory", "pulseaudio", "battery", "network", "tray"],
   // "mode": {
   // "docked": {
   //   "output": ["eDP-1"],
