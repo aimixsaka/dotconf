@@ -65,7 +65,7 @@ precheck() {
   if ! [[ -d "/bakroot/$parent_name" && -d "/.snapshots/$parent_name" ]]; then
     btrfs subvolume snapshot -r $source_dir /.snapshots/$parent_name &&
       info "'$parent_name' created!"
-    btrfs send /.snapshots/$parent_name | btrfs receive /bakroot ||
+    btrfs send /.snapshots/$parent_name | pv | btrfs receive /bakroot ||
     error "Unable to Send parent snapshot: '/.snapshots/$parent_name'"
   fi
 }
@@ -77,7 +77,7 @@ bak() {
 
   btrfs subvolume snapshot -r $source_dir /.snapshots/$new_name ||
     error "Unable to create subvolume '/.snapshots/$new_name'"
-  btrfs send -p /.snapshots/$parent_name /.snapshots/$new_name | btrfs receive /bakroot ||
+  btrfs send -p /.snapshots/$parent_name /.snapshots/$new_name | pv | btrfs receive /bakroot ||
     error "Unable to Send snapshot for '/.snapshots/$new_name'"
   btrfs subvolume delete "/.snapshots/$parent_name"
   mv "/.snapshots/$new_name" "/.snapshots/$parent_name"
