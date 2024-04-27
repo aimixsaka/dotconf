@@ -26,30 +26,38 @@ error() {
 }
 
 clean() {
-    # lsblk | grep bakroot >&/dev/null && umount /bakroot 
 	mountpoint -q /bakroot && umount /bakroot
-  [[ -e "/dev/mapper/bak" ]] && cryptsetup close bak
+  # NOTE: for cryptdevice
+  #[[ -e "/dev/mapper/bak" ]] && cryptsetup close bak
 }
 
-PRIVATE_DIR=/home/aimi/private
+# NOTE: for cryptdevice
+#PRIVATE_DIR=/home/aimi/private
 
-
-prerun() {
-  # check root
-  [[ "$EUID" -ne 0 ]] && error "Please run as root"
-
-  disk="$(readlink -e /dev/disk/by-uuid/8b7faef1-ea61-43ca-8b5c-518b48d5ab32)"
-  [[ -z "$disk" ]] && error "Cannot find bak disk"
-
+# NOTE: for cryptdevice
+decrypt() {
   # open and mount cryptdevice if not yet
   if ! [[ -e /dev/mapper/bak ]]; then
     base64 -d "$PRIVATE_DIR/pass_base64.txt" | cryptsetup open "$disk" bak ||
       error "Decrypt $disk failed"
   fi
-  [[ -d /bakroot ]] || mkdir /bakroot
-  mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
-
 }
+
+## check root permission and if disk part exists
+prerun() {
+  # check root
+  [[ "$EUID" -ne 0 ]] && error "Please run as root"
+
+  disk="$(readlink -e /dev/disk/by-partlabel/bak)"
+  [[ -z "$disk" ]] && error "Cannot find bak disk"
+  [[ -d /bakroot ]] || mkdir /bakroot
+
+  mountpoint -q /bakroot || mount "$disk" /bakroot
+  # NOTE: for cryptdevice
+  # decrypt
+  # mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
+}
+
 # check if parent subvolume created or not
 # may not exist if this is the first backup
 precheck() {
@@ -62,7 +70,7 @@ precheck() {
   fi
 }
 
-bak () {
+bak() {
   local source_dir="$1" new_name="$2" parent_name="$3"
 
   precheck "$source_dir" "$parent_name"
@@ -78,6 +86,8 @@ bak () {
   mv "/bakroot/$new_name" "/bakroot/$parent_name"
   info "'$source_dir' directory bak ok!"
 }
+
+prerun
 
 # bak root
 bak / root-new root
