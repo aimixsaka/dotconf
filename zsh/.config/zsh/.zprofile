@@ -38,6 +38,12 @@ export WORDCHARS="*?_-.[]~&;!#$%^(){}<>|";
 
 export TEXMFDIST=/usr/share/texmf-dist
 
+# flutter
+export PATH="/opt/flutter/bin:$PATH"
+
+# lfs
+export LFS="/home/aimi/workspace/lfs/lfsroot"
+
 
 # sync all envs to systemd program
 command -v dbus-update-activation-environment &>/dev/null && \

@@ -34,6 +34,9 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-bin-gem-node \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
+# zsh-fzf-history-search
+zinit ice lucid wait'0'
+zinit light joshskidmore/zsh-fzf-history-search
 # p10k
 zinit ice depth=1; zinit light romkatv/powerlevel10k
 zinit light zdharma-continuum/fast-syntax-highlighting
@@ -45,9 +48,6 @@ zinit light zsh-users/zsh-autosuggestions
 #--------------------------
 ## Personal Config 
 #--------------------------
-# history tool
-eval "$(atuin init zsh)"
-
 bindkey -e
 
 ## workdir
@@ -59,6 +59,7 @@ alias cl="clear -x";
 alias ws="cd ~/workspace";
 alias grep="grep --color=auto"
 alias rm="trash"
+alias del="/usr/bin/rm"
 
 alias l="ls --color=auto -l";
 alias ls="ls --color=auto";
@@ -70,6 +71,9 @@ alias vnc-lpi4a='ssh -v -fL 9901:localhost:5901 lpi4a sleep 10;  vncviewer local
 
 # minicom
 alias lpi4a='sudo env LANG=en_US.UTF-8 minicom --color=on'
+
+# xm router
+alias sshxm='sshpass -f ~/private/xm_ax6000_ssh_pass.txt ssh xm'
 
 # dmlive
 alias dmlive='$_WORKDIR/rust/dmlive/target/release/dmlive'
@@ -192,6 +196,38 @@ int main()
 EOF
 }
 
+proxy_set_env() {
+    local protocol=$1 ip=$2 port=$3
+    export http_proxy=$protocol://$ip:$port
+    export HTTP_PROXY=$protocol://$ip:$port
+    export https_proxy=$protocol://$ip:$port
+    export HTTPS_PROXY=$protocol://$ip:$port
+    export term_proxy_status="on"
+}
+
+proxy() {
+    local switch=$1
+    local protocol=${2:-http}
+    local port=${3:-2842}
+    local ip=127.0.0.1
+    if [[ "$switch" == "on" ]]; then
+        proxy_set_env $protocol $ip $port
+    elif [[ "$switch" == "off" ]]; then
+        unset http_proxy
+        unset HTTP_PROXY
+        unset https_proxy
+        unset HTTPS_PROXY
+        export term_proxy_status="off"
+    elif [[ "$switch" == "status" ]]; then
+        echo "status: ${term_proxy_status:-off}"
+    elif [[ "$switch" == "v2raya" ]]; then
+        ip=192.168.1.1
+        proxy_set_env $protocol $ip $port
+    else
+        echo "Unknown option: $switch"
+    fi
+}
+
 # load autojump
 [[ -e /usr/share/autojump/autojump.zsh ]] && source /usr/share/autojump/autojump.zsh
 
@@ -205,12 +241,12 @@ setopt hist_ignore_space
 # set history size
 HISTSIZE=10000000
 SAVEHIST=$HISTSIZE
-#HISTFILE=$HOME/.config/zsh/.zhistory
+HISTFILE=$HOME/.zhistory
 
 setopt autocd
 
-# needed for true color of tmux
-export TERM=xterm-256color
+# default to turn proxy on
+proxy on
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
