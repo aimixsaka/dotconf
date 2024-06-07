@@ -1,9 +1,9 @@
 # alias
 fn cl { e:clear -x }
-fn ws { e:cd ~/workspace }
+fn ws { cd ~/workspace }
 fn grep { |@args| e:grep --color=auto $@args }
+fn delete { |@args| e:rm $@args }
 fn rm { |@args| e:trash $@args }
-fn del { |@args| e:rm $@args }
 fn ll { |@args| e:ls --color=auto -l $@args }
 fn ls { |@args| e:ls --color=auto $@args }
 fn lst { |@args| e:ls -al --time=birth $@args }
@@ -109,7 +109,7 @@ fn rvarch {
 fn rvunarch { e:sed -i -E -e 's|^arch=\((.*?)( riscv64)+\)|arch=\(\1\)|' PKGBUILD }
 
 # tmux
-fn tmux { cd (get-env _WORKDIR); tmux }
+fn tmux { cd (get-env _WORKDIR); e:tmux }
 
 fn lg { e:bash ~/login.sh }
 
