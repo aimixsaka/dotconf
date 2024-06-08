@@ -19,4 +19,8 @@ keys $user-alias: | each {|cmd|
   }
 }
 
+# setup prompt
+set edit:prompt = { styled '('(str:replace '/home/aimi' '~' (pwd))')' '#00AFFC' bold; styled "\nλ " '#5FD700' bold }
+set edit:rprompt = { (constantly (styled (whoami)@(cat /etc/hostname)' ' '#B9AD87' bold)); styled (date +%H:%M:%S) '#425D5D' bold }
+
 user-functions:proxy on
