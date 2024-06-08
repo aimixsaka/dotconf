@@ -5,6 +5,7 @@ use str
 use user-alias
 use user-functions
 use user-env
+use user-packages
 
 each {|c| # this adds function names from module to REPL, from Kurtis
     var code = 'edit:add-var '$c' $mod:'$c
