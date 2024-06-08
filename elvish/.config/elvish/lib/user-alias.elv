@@ -40,6 +40,7 @@ fn paqk { |@args| e:pacman -Qk $@args }
 fn paqkk { |@args| e:pacman -Qkk $@args }
 fn paclear { |@args| e:sudo pacman -Rns (pacman -Qqdt) }
 fn paf { |@args| e:pacman -F $@args }
+fn pafy { |@args| e:sudo pacman -Fy $@args }
 fn pafl { |@args| e:pacman -Fl $@args }
 fn pau { e:sudo pacman -Syu }
 fn par { |@args| e:sudo pacman -Rns $@args }
