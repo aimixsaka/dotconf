@@ -246,7 +246,7 @@ HISTFILE=$HOME/.zhistory
 setopt autocd
 
 # default to turn proxy on
-proxy on
+#proxy on
 
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
