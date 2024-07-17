@@ -48,8 +48,3 @@ export LFS="/home/aimi/workspace/lfs/lfsroot"
 # sync all envs to systemd program
 command -v dbus-update-activation-environment &>/dev/null && \
     dbus-update-activation-environment --systemd --all 2>/dev/null
-
-# alias
-alias config='/usr/bin/git --git-dir=$HOME/dotconf/.git --work-tree=$HOME'
-
-[[ -e ~/.zshrc ]] && source ~/.zshrc
