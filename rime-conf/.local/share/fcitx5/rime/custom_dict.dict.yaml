@@ -1,0 +1,15 @@
+# 摘自雾凇拼音
+---
+name: custom_dict
+version: "1"
+sort: by_weight
+import_tables:
+  #- cn_dicts/41448 # 大字表
+  - cn_dicts/8105
+  - cn_dicts/base
+  - cn_dicts/ext
+  - cn_dicts/others
+  - cn_dicts/tencent
+  - moegirl
+  - zhwiki
+...

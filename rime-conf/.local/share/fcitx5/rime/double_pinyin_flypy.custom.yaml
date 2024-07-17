@@ -1,0 +1,31 @@
+patch:
+  switches/@2:
+    name: traditionalization
+    #reset: 0
+    states: [ 简, 繁 ]
+
+  engine/filters:
+    - simplifier@traditionalize
+    - uniquifier
+
+  traditionalize:
+    option_name: traditionalization
+    opencc_config: s2tw.json
+    tips: all
+
+  ## 自定義詞典
+  translator/dictionary: custom_dict
+
+  ## emoji_suggestion
+  switches/@next:
+    name: emoji_suggestion
+    reset: 1
+    states: [ "🈚︎", "🈶️" ]
+  'engine/filters/@before 0':
+    simplifier@emoji_suggestion
+  emoji_suggestion:
+    opencc_config: emoji.json
+    option_name: emoji_suggestion
+    tips: none
+    inherit_comment: false
+
