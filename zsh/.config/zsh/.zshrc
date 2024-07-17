@@ -125,6 +125,7 @@ alias ssen="sudo systemctl enable --now";
 alias sst="sudo systemctl stop ";
 alias blc="bluetoothctl connect ";
 alias sch="systemctl hibernate";
+alias scs="systemctl suspend";
 
 alias sua="systemctl --user status";
 alias suss="systemctl --user start";
