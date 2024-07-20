@@ -41,6 +41,8 @@ patch:
 
   ## 自定義詞典
   translator/dictionary: custom_dict
+  # See https://dvel.me/posts/make-rime-en-better/#%E6%9D%83%E9%87%8D%E8%AE%BE%E5%AE%9A
+  translator/initial_quality: 1.2
 
   ## emoji_suggestion
   switches/@next:
