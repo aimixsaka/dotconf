@@ -22,10 +22,10 @@ fn proxy {
     if (eq $switch on) {
       proxy-set-env $protocol $ip $port
     } elif (eq $switch off) {
-      unset http_proxy
-      unset HTTP_PROXY
-      unset https_proxy
-      unset HTTPS_PROXY
+      unset-env http_proxy
+      unset-env HTTP_PROXY
+      unset-env https_proxy
+      unset-env HTTPS_PROXY
       set-env term_proxy_status "off"
     } elif (eq $switch status) {
       echo "status: "(if (has-env term_proxy_status) { put $E:term_proxy_status } else { put off })

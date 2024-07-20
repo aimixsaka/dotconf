@@ -39,7 +39,7 @@ add-path /nix/var/nix/profiles/default/bin
 set-env XDG_DATA_HOME (get-env HOME)'/.local/share'
 
 
-## editor
+## editro
 set-env EDITOR emacs
 
 ## tmp
