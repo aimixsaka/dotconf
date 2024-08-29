@@ -1,0 +1,9 @@
+;; emacs keybinds
+(define-configuration buffer
+  ((default-modes
+    (pushnew 'nyxt/mode/emacs:emacs-mode %slot-value%))))
+
+(define-configuration input-buffer
+  ((override-map
+    (let ((map (make-keymap "override-map")))
+      (define-key map "M-x" 'execute-command)))))
