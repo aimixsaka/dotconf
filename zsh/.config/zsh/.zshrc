@@ -78,6 +78,11 @@ alias sshxm='sshpass -f ~/private/xm_ax6000_ssh_pass.txt ssh xm'
 # dmlive
 alias dmlive='$_WORKDIR/rust/dmlive/target/release/dmlive'
 
+# emacs
+alias em='emacsclient -nw'
+# helix
+alias hx='helix'
+
 # alias del="/usr/bin/env rm";
 # alias sdel="sudo del";
 
@@ -195,6 +200,17 @@ int main()
     return 0; 
 }
 EOF
+}
+
+loop() {
+  cmd="$1"
+  times="${2:-10}"
+  sleep_time="${3:-1.5}"
+  while ! eval "$cmd" && ((times >= 0)); do
+    eval "$cmd"
+    sleep $sleep
+    times=$((times - 1))
+  done
 }
 
 proxy_set_env() {
