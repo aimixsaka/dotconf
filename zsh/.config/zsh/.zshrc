@@ -203,12 +203,12 @@ EOF
 }
 
 loop() {
-  cmd="$1"
+  cmd="$@"
   times="${2:-10}"
   sleep_time="${3:-1.5}"
   while ! eval "$cmd" && ((times >= 0)); do
     eval "$cmd"
-    sleep $sleep
+    sleep $sleep_time
     times=$((times - 1))
   done
 }
