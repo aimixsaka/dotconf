@@ -1,0 +1,12 @@
+theme = "onedarker"
+
+[editor]
+line-number = "relative"
+
+[editor.cursor-shape]
+insert = "bar"
+
+[keys.insert]
+"C-[" = "normal_mode"
+[keys.select]
+"C-[" = "normal_mode"
