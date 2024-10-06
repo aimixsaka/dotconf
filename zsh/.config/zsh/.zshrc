@@ -78,8 +78,9 @@ alias sshxm='sshpass -f ~/private/xm_ax6000_ssh_pass.txt ssh xm'
 # dmlive
 alias dmlive='$_WORKDIR/rust/dmlive/target/release/dmlive'
 
-# emacs
-alias em='emacsclient -nw'
+# xwayland detect
+alias xwayland=extramaus
+
 # helix
 alias hx='helix'
 
@@ -153,9 +154,6 @@ alias dp="docker ps";
 alias dpa="docker ps -a ";
 alias dil="docker image ls";
 
-# default use emacs terminal mode
-# alias emacs='emacs -nw';
-
 # xray;
 alias xsr="ssr xray.service nftables.service";
 #xst="sst xray.service nftables.service";
@@ -188,6 +186,13 @@ alias lg="bash ~/login.sh"
 
 # texlive
 alias tlmgr="$TEXMFDIST/scripts/texlive/tlmgr.pl --usermode"
+
+# emacs
+em() {
+  f="$1"
+  [[ -r "$f" ]] && emacsclient -t "$f" ||
+	  emacsclient -t -e "(find-file \"/sudo::$f\")"
+}
 
 cpprun() {
     content="$1"

@@ -1,40 +1,17 @@
+[[ -f "$HOME/.config/zsh/.zshlib" ]] && source "$HOME/.config/zsh/.zshlib"
+
 # XDG Directory
 XDG_CONFIG_HOME=~/.config
 XDG_CACHE_HOME=~/.cache
 
 export XDG_CONFIG_HOME XDG_CACHE_HOME
 
-append_path() {
-  case ":$PATH:" in
-  *:"$1":*) ;;
-  *)
-    PATH="${PATH:+$PATH:}$1"
-    ;;
-  esac
 
-  export PATH
-}
-
-append_env() {
-  local env_name to_add
-  env_name="$1"
-  to_add="$2"
-  delimiter="${3:-:}"
-  env_value="$(eval "echo \$$env_name")"
-  if [[ -z "$env_value" ]]; then
-    eval $env_name=$to_add
-  elif [[ "${delimiter}${env_value}${delimiter}" =~ \.*"${delimiter}${to_add}${delimiter}"\.* ]]; then
-    :
-  else
-    eval $env_name="${env_value}${delimiter}${to_add}"
-  fi
-
-  export $env_name
-}
 
 # modified, need to export
 export XDG_DATA_HOME=~/.local/share
 append_env XDG_DATA_DIRS "$XDG_DATA_HOME/flatpak/exports/share"
+append_env XDG_DATA_DIRS "$XDG_DATA_HOME/applications/icons"
 export XDG_STATE_HOME=~/.local/state
 
 # default program
@@ -68,6 +45,9 @@ PIPX_BIN="$HOME/.local/bin"
 append_path "$PIPX_BIN"
 
 append_path "/opt/flutter/bin"
+
+# moonbit
+append_path "$HOME/.moon/bin"
 
 export WORDCHARS="*?_-.[]~&;!#$%^(){}<>|"
 
