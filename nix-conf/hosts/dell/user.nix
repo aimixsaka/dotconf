@@ -9,6 +9,8 @@ let
 in
 {
   programs.zsh.enable = true;
+  # this user need a DE
+  security.polkit.enable = true;
   users.users.aimi = {
     isNormalUser = true;
     shell = pkgs.zsh;
