@@ -58,20 +58,19 @@
               stable = pkgsFrom inputs.stable system;
             };
         };
-        
+
         # NixOS and nix-darwin base environment.systemPackages
         basePackagesFor =
           pkgs:
           lib.attrValues {
             inherit (pkgs)
-              nano
               curl
               fd
               ripgrep
               man-pages-posix
               wget
               git
-              subversion
+              vim
               ;
 
             home-manager = inputs'.home.packages.home-manager.override { path = "${inputs.home}"; };

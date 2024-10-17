@@ -20,12 +20,10 @@
       ripgrep
 
       ## term
-      alacritty
       git
       tmux
       fzf
       tree
-      wget
       htop
       parallel
 

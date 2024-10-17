@@ -55,7 +55,10 @@
   # the nixConfig affects the flake itself,
   # not the system configuration
   nixConfig = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
     substituters = [
       "https://mirrors.ustc.edu.cn/nix-channels/store"
