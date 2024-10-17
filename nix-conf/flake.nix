@@ -14,9 +14,6 @@
         ./hosts
         ./users
       ];
-
-      ### -- expose self flake modules to others
-      flake.flakeModule = ./modules/parts;
     };
 
   inputs = {

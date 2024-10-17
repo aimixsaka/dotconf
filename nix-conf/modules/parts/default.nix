@@ -58,6 +58,29 @@
               stable = pkgsFrom inputs.stable system;
             };
         };
+        
+        # NixOS and nix-darwin base environment.systemPackages
+        basePackagesFor =
+          pkgs:
+          lib.attrValues {
+            inherit (pkgs)
+              nano
+              curl
+              fd
+              ripgrep
+              man-pages-posix
+              wget
+              git
+              subversion
+              ;
+
+            home-manager = inputs'.home.packages.home-manager.override { path = "${inputs.home}"; };
+
+            man-pages =
+              if pkgs.stdenv.isLinux then pkgs.man-pages else inputs'.nixpkgs-f2k.packages.man-pages-xnu;
+
+            gnu-coreutils = if pkgs.stdenv.isLinux then pkgs.coreutils else pkgs.coreutils-prefixed;
+          };
       };
 
       formatter = pkgs.nixfmt-rfc-style;
