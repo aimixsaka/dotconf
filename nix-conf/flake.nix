@@ -1,14 +1,23 @@
 {
   description = "aimi flake config for macos";
 
-
-  outputs = inputs: inputs.parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-darwin" ];
-      imports = [ ./modules/parts ./overlays ./hosts ./users ];
+  outputs =
+    inputs:
+    inputs.parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-darwin"
+        "x86_64-linux"
+      ];
+      imports = [
+        ./modules/parts
+        ./overlays
+        ./hosts
+        ./users
+      ];
 
       ### -- expose self flake modules to others
       flake.flakeModule = ./modules/parts;
-  };
+    };
 
   inputs = {
     ### -- nix lang & nixpkgs help
@@ -25,16 +34,21 @@
 
     # Default Nixpkgs for packages and modules
     nixpkgs.follows = "master";
-    
+
     ### -- overlays
     emacs-overlays.url = "github:nix-community/emacs-overlay";
 
     ### -- platform support
     darwin.url = "github:LnL7/nix-darwin";
     home.url = "github:nix-community/home-manager";
-    
+
+    ### -- install tools
+    disko.url = "github:nix-community/disko";
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+
     # Minimize duplicate instances of inputs
     nix.inputs.nixpkgs.follows = "nixpkgs";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     home.inputs.nixpkgs.follows = "nixpkgs";

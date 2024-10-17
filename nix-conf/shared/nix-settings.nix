@@ -1,16 +1,16 @@
-{ inputs, }:
+{ inputs }:
 
 {
   # nix path's nixpkgs follow inputs one
   nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-  
+
   # make commands like `nix run` follow flake.nix inputs
   registry = {
     system.flake = inputs.self;
     default.flake = inputs.nixpkgs;
     home-manager.flake = inputs.home;
   };
-  
+
   settings = {
     experimental-features = [
       "flakes"
@@ -31,8 +31,12 @@
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
     ];
-    
-    trusted-users = [ "root" "aimi" "nixos" ];
+
+    trusted-users = [
+      "root"
+      "aimi"
+      "nixos"
+    ];
     # FIXME: what does this mean?
     #use-xdg-base-directories = true;
   };

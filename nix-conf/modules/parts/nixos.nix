@@ -10,38 +10,43 @@ let
   inherit lib;
   inherit (lib) types;
 
-  cfg = config.parts.darwinConfigurations;
-  configurations = builtins.mapAttrs (_: value: value._darwin) cfg;
+  cfg = config.parts.nixosConfigurations;
+  configurations = builtins.mapAttrs (_: value: value._nixos) cfg;
 
-  darwinOpts =
+  nixosOpts =
     { config, name, ... }:
     {
       options = {
+        server = lib.mkEnableOption "Host is a headless server configuration.";
+
         system = lib.mkOption {
-          type = types.enum [ "x86_64-darwin" ];
+          type = types.enum [
+            "x86_64-linux"
+            "x86_64-darwin"
+          ];
           description = "System architecture for the configuration.";
         };
 
         stateVersion = lib.mkOption {
-          type = types.int;
-          description = "nix-darwin state version, See: https://daiderd.com/nix-darwin/manual/index.html#opt-system.stateVersion .";
+          type = types.str;
+          description = "NixOS state version, changing this value DOES NOT update your system.";
         };
 
         modules = lib.mkOption {
           type = types.listOf types.unspecified;
-          description = "List of nix-darwin modules to be included as configuration.";
+          description = "List of NixOS modules to be included as configuration.";
         };
 
-        _darwin = lib.mkOption {
+        _nixos = lib.mkOption {
           type = types.unspecified;
           readOnly = true;
-          description = "Composed final nix-darwin configuration, used by config.flake.darwinConfigurations .";
+          description = "Composed final NixOS configuration, used by config.flake.darwinConfigurations .";
         };
       };
 
-      config._darwin = withSystem config.system (
+      config._nixos = withSystem config.system (
         ctx:
-        inputs.darwin.lib.darwinSystem {
+        inputs.nixpkgs.lib.nixosSystem {
           #inherit inputs;
           inherit (ctx) system;
 
@@ -53,9 +58,7 @@ let
           };
 
           modules = config.modules ++ [
-            ../../shared/nix-darwin
-            # Shared packages over nix-darwin and nixos
-            ../../shared/full-packages.nix
+            ../../shared/nixos
             (
               { pkgs, ... }:
               {
@@ -73,9 +76,9 @@ let
 in
 {
   # it seems submodule's `config` arg is isolated from upper module's config arg :-/
-  options.parts.darwinConfigurations = lib.mkOption {
-    type = types.attrsOf (types.submodule darwinOpts);
+  options.parts.nixosConfigurations = lib.mkOption {
+    type = types.attrsOf (types.submodule nixosOpts);
   };
 
-  config.flake.darwinConfigurations = configurations;
+  config.flake.nixosConfigurations = configurations;
 }

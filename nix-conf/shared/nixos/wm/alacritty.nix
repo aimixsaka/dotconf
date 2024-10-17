@@ -18,7 +18,7 @@
       };
 
       font = {
-        normal.family = "DejaVuSansM Nerd Font Mono";
+        normal.family = "monospace";
         size = 21;
       };
 
@@ -57,7 +57,7 @@
       };
 
       selection = {
-        semantic_escape_chars = ",│`|:\"' ()[]{}<>\t";
+        semantic_escape_chars = '',│`|:"' ()[]{}<>	'';
         save_to_clipboard = true;
       };
 
