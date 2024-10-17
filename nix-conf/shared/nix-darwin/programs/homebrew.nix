@@ -5,10 +5,8 @@ in
 {
   homebrew = {
     enable = true;
-    
-    taps = [
-      "railwaycat/emacsmacport"
-    ];
+
+    taps = [ "railwaycat/emacsmacport" ];
 
     brews = flattenValues {
       system = [
@@ -26,8 +24,8 @@ in
     };
 
     casks = flattenValues {
-      system = [ 
-        "raycast" 
+      system = [
+        "raycast"
         "zerotier-one"
       ];
 

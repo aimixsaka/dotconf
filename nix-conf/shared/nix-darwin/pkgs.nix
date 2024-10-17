@@ -1,27 +1,25 @@
 { pkgs, ... }:
 
 {
-environment.systemPackages =
-  with pkgs;
-  lib.flatten (
-    lib.attrValues {
-    
-      build = [
-        # emacs need statically compiled glibtool
-        (libtool.overrideAttrs(_: {
-          dontDisableStatic = true;
-          # libtool -> glibtool
-          configureFlags = [ "--program-prefix=g" ];
-        }))
-      ];
+  environment.systemPackages =
+    with pkgs;
+    lib.flatten (
+      lib.attrValues {
 
-      net = [ darwin.iproute2mac ];
-      
-      apps = [
-        (emacs-pgtk.overrideAttrs (old: {
-          patches =
-            (old.patches or [])
-            ++ [
+        build = [
+          # emacs need statically compiled glibtool
+          (libtool.overrideAttrs (_: {
+            dontDisableStatic = true;
+            # libtool -> glibtool
+            configureFlags = [ "--program-prefix=g" ];
+          }))
+        ];
+
+        net = [ darwin.iproute2mac ];
+
+        apps = [
+          (emacs-pgtk.overrideAttrs (old: {
+            patches = (old.patches or [ ]) ++ [
               # Fix OS window role (needed for window managers like yabai)
               (fetchpatch {
                 url = "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/fix-window-role.patch";
@@ -43,9 +41,9 @@ environment.systemPackages =
                 sha256 = "sha256-3QLq91AQ6E921/W9nfDjdOUWR8YVsqBAT/W9c1woqAw=";
               })
             ];
-        }))
-      ];
+          }))
+        ];
 
-    }
-  );
+      }
+    );
 }

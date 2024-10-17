@@ -1,5 +1,4 @@
-{ inputs, ... }: {
-  imports = [
-    inputs.nix-index-database.darwinModules.nix-index
-  ];
+{ inputs, ... }:
+{
+  imports = [ inputs.nix-index-database.darwinModules.nix-index ];
 }
