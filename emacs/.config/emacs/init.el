@@ -1,4 +1,5 @@
 ;; attribute
+(setq debug-on-error t)
 (global-display-line-numbers-mode)
 
 (put 'upcase-region 'disabled nil)
@@ -31,8 +32,110 @@
   (other-window (- n)))
 (global-set-key "\C-x\C-p" 'other-window-backward)
 
+;;; advice
+(defadvice switch-to-buffer (before existing-buffer
+				    activate compile)
+  "When activate, switch to existing buffers only,
+unless given a prefix argument."
+  (interactive
+   (list (read-buffer "Switch to buffer:"
+		      (other-buffer)
+		      (null current-prefix-arg)))))
+
+
+
+(defvar unscroll-point (make-marker)
+  "Cursor position for next call to `unscroll'.")
+(defvar unscroll-window-start (make-marker)
+  "Window start for next call to `unscroll'.")
+(defvar unscroll-hscroll nil
+  "Hscroll for next call to `unscroll'.")
+(defun unscroll-maybe-remember ()
+  (unless (get last-command 'unscrollable)
+    (set-marker unscroll-point (point))
+    (set-marker unscroll-window-start (window-start))
+    (setq unscroll-hscroll (window-hscroll))))
+
+(defadvice scroll-up (before remember-for-unscroll
+			     activate compile)
+  (put 'scroll-up 'unscrollable t)
+  (unscroll-maybe-remember))
+(defadvice scroll-down (before remember-for-unscroll
+			     activate compile)
+  (put 'scroll-down 'unscrollable t)
+  (unscroll-maybe-remember))
+(defadvice scroll-left (before remember-for-unscroll
+			     activate compile)
+  (put 'scroll-left 'unscrollable t)
+  (unscroll-maybe-remember))
+(defadvice scroll-right (before remember-for-unscroll
+			     activate compile)
+  (put 'scroll-right 'unscrollable t)
+  (unscroll-maybe-remember))
+
+(defun unscroll ()
+  "Revert to `unscroll-point' and `unscroll-window-start'."
+  (interactive)
+  (if (not unscroll-point)
+      (error "Cannot unscroll yet"))
+  (goto-char unscroll-point)
+  (set-window-start nil unscroll-window-start)
+  (set-window-hscroll nil unscroll-hscroll))
+
+
+
+(defcustom insert-time-format "%X"
+  "Format for \\[insert-time] (c.f. `format-time-string').")
+(defcustom insert-date-format "%x"
+  "Format for \\[insert-date] (c.f. `format-time-string').")
+(defun insert-time ()
+  "Insert the current time according to `insert-time-format'."
+  (interactive "*")
+  (insert (format-time-string insert-time-format
+			      (current-time))))
+(defun insert-date ()
+  "Insert the current date according to `insert-date-format'."
+  (interactive "*")
+  (insert (format-time-string insert-date-format
+			      (current-time))))
+
+(defun insert-date-time ()
+  "Insert date (from `insert-date') and time (from `insert-time')."
+  (interactive "*")
+  (insert-date)
+  (insert " ")
+  (insert-time))
+
+(defcustom writestamp-format "%Y-%m-%d %T"
+  "Format for writestamps (c.f. `format-time-string').")
+(defcustom writestamp-prefix "WRITESTAMP(("
+  "Unique string identifying start of writestamps.")
+(defcustom writestamp-suffix "))"
+  "String that terminates a writestamps.")
+
+;;; hooks
+(add-hook 'write-file-hooks 'update-writestamps)
+(defun update-writestamps ()
+  "Find writestamps and replace them with the current time"
+  (save-excursion
+    (save-restriction
+      (save-match-data
+	(widen)
+	(goto-char (point-min))
+	(while (re-search-forward (concat "^" (regexp-quote writestamp-prefix))
+				  nil t)
+	  (let ((start (point)))
+	    (when (re-search-forward (concat (regexp-quote writestamp-suffix) "$")
+				     (line-end-position) t)
+	      (delete-region start (match-beginning 0))
+	      (goto-char start)
+	      (insert (format-time-string writestamp-format
+					  (current-time)))))))))
+  nil)
+
 
 ;;; custom
+(setq telega-use-images t)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -97,6 +200,7 @@
  '(package-selected-packages '(consult evil marginalia sly telega vertico))
  '(telega-notifications-mode t)
  '(telega-server-libs-prefix "/usr"))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -107,12 +211,12 @@
 
 ;; package
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(unless package-archive-contents
+ (package-refresh-contents))
 (setq completion-styls '(partial-completion substring flex))
 (defun p-install (package)
     (unless (package-installed-p package)
       (with-demoted-errors "%s"
-	(unless package-archive-contents
-	  (package-refresh-contents))
 	(package-install package))))
 
 (p-install 'vertico)
