@@ -197,9 +197,12 @@ unless given a prefix argument."
  '(evil-want-C-u-delete t)
  '(evil-want-C-u-scroll t)
  '(evil-want-C-w-delete t)
- '(package-selected-packages '(consult evil marginalia sly telega vertico))
+ '(menu-bar-mode nil)
+ '(package-selected-packages '(consult evil marginalia sly telega vertico vterm))
+ '(scroll-bar-mode nil)
  '(telega-notifications-mode t)
- '(telega-server-libs-prefix "/usr"))
+ '(telega-server-libs-prefix "/usr")
+ '(tool-bar-mode nil))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -229,6 +232,8 @@ unless given a prefix argument."
 (setq inferior-lisp-program "sbcl")
 
 (p-install 'telega)
+
+(p-install 'vterm)
 
 ;; (p-install 'evil)
 ;; (with-demoted-errors "%s" (evil-mode +1))
