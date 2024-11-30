@@ -15,8 +15,7 @@ append_env XDG_DATA_DIRS "$XDG_DATA_HOME/applications/icons"
 export XDG_STATE_HOME=~/.local/state
 
 # default program
-export EDITOR=emacs
-export BROWSER=firefox
+export EDITOR=vis
 
 # envs
 ## riscv bin
@@ -44,10 +43,18 @@ append_path "$MASON_BIN"
 PIPX_BIN="$HOME/.local/bin"
 append_path "$PIPX_BIN"
 
+CARGO_BIN="$HOME/.cargo/bin"
+append_path "$CARGO_BIN"
+
 append_path "/opt/flutter/bin"
 
 # moonbit
 append_path "$HOME/.moon/bin"
+append_path "$XDG_DATA_HOME/lsp/moonbit/bin"
+
+# plan9
+PLAN9=/home/aimi/.local/plan9
+append_path "$PLAN9/bin"
 
 export WORDCHARS="*?_-.[]~&;!#$%^(){}<>|"
 
@@ -58,6 +65,8 @@ export TEXMFDIST=/usr/share/texmf-dist
 # lfs
 export LFS="/home/aimi/workspace/lfs/lfsroot"
 
+# term
+export TERM=alacritty
 # sync all envs to systemd program
 command -v dbus-update-activation-environment &>/dev/null &&
   dbus-update-activation-environment --systemd --all 2>/dev/null

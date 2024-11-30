@@ -66,6 +66,12 @@ alias ls="ls --color=auto";
 alias lst="ls -al --time=birth";
 alias lh="ls --color=auto -alh"
 
+# gdb
+alias gdb="gdb -q"
+
+# nixvim
+alias nixvim="nix run ~/nixvim#full -- "
+
 # tigervnc lpi4a
 alias vnc-lpi4a='ssh -v -fL 9901:localhost:5901 lpi4a sleep 10;  vncviewer localhost:9901'
 
@@ -80,9 +86,6 @@ alias dmlive='$_WORKDIR/rust/dmlive/target/release/dmlive'
 
 # xwayland detect
 alias xwayland=extramaus
-
-# helix
-alias hx='helix'
 
 # alias del="/usr/bin/env rm";
 # alias sdel="sudo del";
@@ -127,11 +130,14 @@ alias sdr="sudo systemctl daemon-reload";
 alias ssr="sudo systemctl restart ";
 alias ssa="systemctl status ";
 alias sse="sudo systemctl enable ";
+alias ssd="sudo systemctl disable";
 alias ssen="sudo systemctl enable --now";
+alias ssdn="sudo systemctl disable --now";
 alias sst="sudo systemctl stop ";
 alias blc="bluetoothctl connect ";
 alias sch="systemctl hibernate";
 alias scs="systemctl suspend";
+alias sct="systemctl cat"
 
 alias sua="systemctl --user status";
 alias suss="systemctl --user start";
@@ -179,9 +185,6 @@ alias someoff="$HOME/some.sh off"
 alias rvarch="! grep -E -q '^arch=\(.*?(any|riscv64).*?\)' PKGBUILD && sed -i -E -e 's|^arch=\((.*)\)|arch=\(\1 riscv64\)|' PKGBUILD"
 alias rvunarch="sed -i -E -e 's|^arch=\((.*?)( riscv64)+\)|arch=\(\1\)|' PKGBUILD"
 
-# tmux
-alias tmux="cd $_WORKDIR && tmux"
-
 alias lg="bash ~/login.sh"
 
 # texlive
@@ -194,7 +197,12 @@ em() {
 	  emacsclient -t -e "(find-file \"/sudo::$f\")"
 }
 
-cpprun() {
+# tmux
+tmw() {
+  tmux split-window -dh "$@"
+}
+
+runcpp() {
     content="$1"
     cat <<EOF | g++ -xc++ - && { [[ -e ./a.out ]] && ./a.out && rm ./a.out }
 #include <bits/stdc++.h>
@@ -205,6 +213,15 @@ int main()
     return 0; 
 }
 EOF
+}
+
+buildasm() {
+    filename="${1%%.*}"
+    nasm -g -f elf64 -o "$filename".o "$1" &&
+    ld -o "$filename" "$filename".o
+}
+
+winrar() {
 }
 
 loop() {
