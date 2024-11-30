@@ -33,14 +33,14 @@ export MOZ_ENABLE_WAYLAND=1
 #export WLR_RENDERER=vulkan
 
 ## XDG
-export XDG_CURRENT_DESKTOP=Hyprland
-export XDG_SESSION_DESKTOP=Hyprland
+export XDG_CURRENT_DESKTOP=river
+export XDG_SESSION_DESKTOP=river
 
 ## fcitx5
 ## Seems no need anymore
-export GTK_IM_MODULE=fcitx
+#export GTK_IM_MODULE=fcitx
 # need for app like texmacs
-export QT_IM_MODULE=fcitx
+#export QT_IM_MODULE=fcitx
 
 export XMODIFIERS=@im=fcitx
 
@@ -58,6 +58,6 @@ export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export XDG_SESSION_TYPE=wayland
 #env = GBM_BACKEND,nvidia-drm
 #env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-export WLR_NO_HARDWARE_CURSORS=1
+#export WLR_NO_HARDWARE_CURSORS=1
 
 river
