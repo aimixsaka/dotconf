@@ -1,4 +1,3 @@
-live_config_reload = true
 
 [colors]
 draw_bold_text_with_bright_colors = true
@@ -53,3 +52,11 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 dynamic_padding = true
 #opacity = 0.85
 opacity = 1
+
+[keyboard]
+bindings = [
+{ key = "F1", mods = "Command | Control | Option | Super | Shift | Alt", mode = "AppCursor|AppKeypad|Search|Vi", action = "ToggleViMode" }
+]
+
+[general]
+live_config_reload = true
