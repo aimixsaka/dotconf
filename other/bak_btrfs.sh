@@ -2,6 +2,9 @@
 set -euo pipefail
 #trap "echo 'error: Script failed: see failed message above'" ERR
 
+
+BACKUP_ROOT=/mnt/bakroot
+
 ##
 # INFO level message
 ##
@@ -26,7 +29,7 @@ error() {
 }
 
 clean() {
-	mountpoint -q /bakroot && umount /bakroot
+	mountpoint -q $BACKUP_ROOT && umount $BACKUP_ROOT
   # NOTE: for cryptdevice
   #[[ -e "/dev/mapper/bak" ]] && cryptsetup close bak
 }
@@ -48,24 +51,24 @@ prerun() {
   # check root
   [[ "$EUID" -ne 0 ]] && error "Please run as root"
 
-  disk="$(readlink -e /dev/disk/by-partlabel/bak)"
+  disk="$(readlink -e /dev/disk/by-partlabel/data)"
   [[ -z "$disk" ]] && error "Cannot find bak disk"
-  [[ -d /bakroot ]] || mkdir /bakroot
+  [[ -d $BACKUP_ROOT ]] || mkdir $BACKUP_ROOT
 
-  mountpoint -q /bakroot || mount "$disk" /bakroot
+  mountpoint -q $BACKUP_ROOT || mount "$disk" $BACKUP_ROOT
   # NOTE: for cryptdevice
   # decrypt
-  # mountpoint -q /bakroot || mount /dev/mapper/bak /bakroot
+  # mountpoint -q $BACKUP_ROOT || mount /dev/mapper/bak $BACKUP_ROOT
 }
 
 # check if parent subvolume created or not
 # may not exist if this is the first backup
 precheck() {
   local source_dir="$1" parent_name="$2"
-  if ! [[ -d "/bakroot/$parent_name" && -d "/.snapshots/$parent_name" ]]; then
+  if ! [[ -d "$BACKUP_ROOT/$parent_name" && -d "/.snapshots/$parent_name" ]]; then
     btrfs subvolume snapshot -r $source_dir /.snapshots/$parent_name &&
       info "'$parent_name' created!"
-    btrfs send /.snapshots/$parent_name | pv | btrfs receive /bakroot ||
+    btrfs send /.snapshots/$parent_name | pv | btrfs receive $BACKUP_ROOT/ ||
     error "Unable to Send parent snapshot: '/.snapshots/$parent_name'"
   fi
 }
@@ -77,13 +80,13 @@ bak() {
 
   btrfs subvolume snapshot -r $source_dir /.snapshots/$new_name ||
     error "Unable to create subvolume '/.snapshots/$new_name'"
-  btrfs send -p /.snapshots/$parent_name /.snapshots/$new_name | pv | btrfs receive /bakroot ||
+  btrfs send -p /.snapshots/$parent_name /.snapshots/$new_name | pv | btrfs receive $BACKUP_ROOT/ ||
     error "Unable to Send snapshot for '/.snapshots/$new_name'"
   btrfs subvolume delete "/.snapshots/$parent_name"
   mv "/.snapshots/$new_name" "/.snapshots/$parent_name"
 
-  btrfs subvolume delete "/bakroot/$parent_name"
-  mv "/bakroot/$new_name" "/bakroot/$parent_name"
+  btrfs subvolume delete "$BACKUP_ROOT/$parent_name"
+  mv "$BACKUP_ROOT/$new_name" "$BACKUP_ROOT/$parent_name"
   info "'$source_dir' directory bak ok!"
 }
 
@@ -98,15 +101,11 @@ bak /home/aimi/workspace home_aimi_workspace-new home_aimi_workspace
 # bak /var/lib
 bak /var/lib/pacman var_lib_pacma-new var_lib_pacman
 
-rsync -a /var/log/pacman.log /bakroot/
+rsync -a /var/log/pacman.log $BACKUP_ROOT/
 info "'pacman.log' sync ok!"
 
-rsync -a --delete /boot/ /bakroot/boot
+rsync -a --delete /boot/ $BACKUP_ROOT/boot
 info "'boot directory' sync ok!"
-
-clean
-
-
 
 
 ## TODO
