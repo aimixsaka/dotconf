@@ -2,6 +2,9 @@ keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
     }
+    normal {
+      bind "Ctrl g" { SwitchToMode "locked"; }
+    }
     resize {
         bind "left" { Resize "Increase left"; }
         bind "down" { Resize "Increase down"; }
@@ -38,6 +41,7 @@ keybinds clear-defaults=true {
         bind "e" { EditScrollback; SwitchToMode "normal"; }
         bind "Ctrl g" { SwitchToMode "normal"; }
         bind "s" { SwitchToMode "entersearch"; SearchInput 0; }
+        bind "/" { SwitchToMode "entersearch"; SearchInput 0; }
     }
     search {
         bind "c" { SearchToggleOption "CaseSensitivity"; }
@@ -77,18 +81,17 @@ keybinds clear-defaults=true {
         bind "Alt =" { Resize "Increase"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
-        bind "Alt f" { ToggleFloatingPanes; }
         bind "Ctrl g" { SwitchToMode "normal"; }
         bind "Alt i" { MoveTab "left"; }
         bind "Alt o" { MoveTab "right"; }
-        bind "Alt h" { MoveFocus "left"; SwitchToMode "normal"; }
-        bind "Alt j" { MoveFocus "down"; SwitchToMode "normal"; }
-        bind "Alt k" { MoveFocus "up"; SwitchToMode "normal"; }
-        bind "Alt l" { MoveFocus "right"; SwitchToMode "normal"; }
+        bind "Alt h" { MoveFocus "left"; }
+        bind "Alt j" { MoveFocus "down"; }
+        bind "Alt k" { MoveFocus "up"; }
+        bind "Alt l" { MoveFocus "right"; }
         bind "Alt space" { NextSwapLayout; }
         bind "Alt r" { SwitchToMode "renamepane"; PaneNameInput 0; }
-        bind "Alt -" { NewPane "down"; SwitchToMode "normal"; }
-        bind "Alt \\" { NewPane "right"; SwitchToMode "normal"; }
+        bind "Alt -" { NewPane "down"; }
+        bind "Alt \\" { NewPane "right"; }
         bind "Alt ," { SwitchToMode "renametab"; }
         bind "Alt c" { NewTab; SwitchToMode "normal"; }
         bind "Alt n" { GoToNextTab; SwitchToMode "normal"; }
@@ -124,7 +127,7 @@ keybinds clear-defaults=true {
     }
     shared_among "scroll" "search" {
         bind "Ctrl c" { ScrollToBottom; SwitchToMode "normal"; }
-        bind "u" { HalfPageScrollDown; }
+        bind "u" { HalfPageScrollUp; }
         bind "d" { HalfPageScrollDown; }
         bind "j" { ScrollDown; }
         bind "k" { ScrollUp; }
@@ -183,19 +186,21 @@ plugins {
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
     }
+    // NOTE: un-comment me if want neovim-zellij navigate
     // autolock
-    autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
-        triggers "nvim|nv"  // Lock when any open these programs open. They are expected to unlock themselves when closed (e.g., using zellij.vim plugin).
-        //watch_triggers "fzf|zoxide|atuin|atac"  // Lock when any of these open and monitor until closed.
-        //watch_interval "1.0"  // When monitoring, check every X seconds.
-    }
+    //autolock location="file:~/.config/zellij/plugins/zellij-autolock.wasm" {
+    //    triggers "nvim|nv"  // Lock when any open these programs open. They are expected to unlock themselves when closed (e.g., using zellij.vim plugin).
+    //    //watch_triggers "fzf|zoxide|atuin|atac"  // Lock when any of these open and monitor until closed.
+    //    //watch_interval "1.0"  // When monitoring, check every X seconds.
+    //}
 }
 
 // Plugins to load in the background when a new session starts
 // eg. "file:/path/to/my-plugin.wasm"
 // eg. "https://example.com/my-plugin.wasm"
 load_plugins {
-  autolock
+  // NOTE: un-comment me if want neovim-zellij navigate
+  //autolock
 }
  
 // Use a simplified UI without special fonts (arrow glyphs)
