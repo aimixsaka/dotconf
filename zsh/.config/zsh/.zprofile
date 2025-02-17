@@ -15,7 +15,7 @@ append_env XDG_DATA_DIRS "$XDG_DATA_HOME/applications/icons"
 export XDG_STATE_HOME=~/.local/state
 
 # default program
-export EDITOR=vis
+export EDITOR=nvim
 
 # envs
 ## riscv bin
@@ -27,6 +27,9 @@ export RV_PATCH_REPO="$RV_DIR/archriscv-packages"
 
 export RV1="$RV_BUILD/aimi"
 export RV2="$RV_BUILD/aimi2"
+
+# personal scripts
+append_path "$HOME/workspace/shell/bash/scripts"
 
 RV_BIN="$RV_DIR/arch-riscv-scripts/bin"
 append_path "$RV_BIN"
@@ -64,6 +67,10 @@ export TEXMFDIST=/usr/share/texmf-dist
 
 # lfs
 export LFS="/home/aimi/workspace/lfs/lfsroot"
+
+# cache
+export USE_CCACHE=1
+export CCACHE_EXEC=/usr/bin/ccache
 
 # term
 export TERM=alacritty
