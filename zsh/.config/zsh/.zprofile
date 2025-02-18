@@ -10,8 +10,6 @@ export XDG_CONFIG_HOME XDG_CACHE_HOME
 
 # modified, need to export
 export XDG_DATA_HOME=~/.local/share
-append_env XDG_DATA_DIRS "$XDG_DATA_HOME/flatpak/exports/share"
-append_env XDG_DATA_DIRS "$XDG_DATA_HOME/applications/icons"
 export XDG_STATE_HOME=~/.local/state
 
 # default program
@@ -49,7 +47,6 @@ append_path "$PIPX_BIN"
 CARGO_BIN="$HOME/.cargo/bin"
 append_path "$CARGO_BIN"
 
-append_path "/opt/flutter/bin"
 
 # moonbit
 append_path "$HOME/.moon/bin"
@@ -63,7 +60,12 @@ export WORDCHARS="*?_-.[]~&;!#$%^(){}<>|"
 
 export TEXMFDIST=/usr/share/texmf-dist
 
+# android
+export ANDROID_HOME=$HOME/Android/Sdk
+
 # flutter
+append_path $HOME/flutter_sdk/flutter/bin
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
 
 # lfs
 export LFS="/home/aimi/workspace/lfs/lfsroot"
