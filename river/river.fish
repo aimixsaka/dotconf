@@ -1,3 +1,4 @@
+#!/usr/bin/env fish
 set -g _JAVA_AWT_WM_NONREPARENTING 1
 # java application font
 #set -g XCURSOR_SIZE 24

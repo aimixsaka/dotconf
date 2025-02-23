@@ -6,6 +6,7 @@ riverctl spawn "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG
 riverctl spawn "/usr/lib/polkit-kde-authentication-agent-1"
 riverctl spawn "swaybg -m fill -i ~/Pictures/shana.jpg"
 riverctl spawn "mako"
+riverctl spawn "blueman-applet"
 riverctl spawn "gammastep -c /home/aimi/.config/gammastep/config.ini"
 riverctl spawn "waybar"
 riverctl spawn "fcitx5 -d"
@@ -68,8 +69,8 @@ riverctl map normal Super+Shift K swap up
 #riverctl map normal Super L send-layout-cmd rivertile "main-ratio +0.05"
 
 # Super+Shift+H and Super+Shift+L to increment/decrement the main count of rivertile(1)
-#riverctl map normal Super+Shift H send-layout-cmd rivertile "main-count +1"
-#riverctl map normal Super+Shift L send-layout-cmd rivertile "main-count -1"
+riverctl map normal Super+Alt H send-layout-cmd rivertile "main-count -1"
+riverctl map normal Super+Alt L send-layout-cmd rivertile "main-count +1"
 
 # Super+Alt+{H,J,K,L} to move views
 riverctl map normal Control+Super Left move left 100
@@ -189,6 +190,7 @@ float_apps=(
     'burp-StartBurp'
     'org.kde.dolphin'
     'org.pulseaudio.pavucontro'
+    'blueman-services'
 )
 for app in "${float_apps[@]}"; do
     riverctl rule-add -app-id "$app" float
