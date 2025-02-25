@@ -9,6 +9,8 @@ border-radius=10
 progress-color=over #414559
 max-visible=3
 default-timeout=6000
+[summary~=.*file.*Bluetooth.*]
+on-notify=exec makoctl menu wofi -d --lines=5 -p 'Choose Action: '
 
 [urgency=high]
 border-color=#ef9f76
