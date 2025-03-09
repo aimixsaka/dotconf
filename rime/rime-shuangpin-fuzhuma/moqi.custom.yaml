@@ -1,0 +1,2 @@
+patch:
+  opencc_config/traditionalize/opencc_config: s2tw.json

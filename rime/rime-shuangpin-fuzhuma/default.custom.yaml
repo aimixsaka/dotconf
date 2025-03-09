@@ -1,0 +1,5 @@
+patch:
+  "key_binder/bindings/+":
+    - { when: has_menu, accept: comma, send: Page_Up }
+    - { when: has_menu, accept: period, send: Page_Down }
+  menu/page_size: 5
