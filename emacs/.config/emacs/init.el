@@ -18,34 +18,6 @@
   (load bootstrap-file nil 'nomessage))
 ;;; package manager end
 
-;; attribute
-(setq debug-on-error t)
-;; (setq help-window-select t)
-(global-display-line-numbers-mode)
-
-;; winner mode
-(winner-mode 1)
-
-;; real auto save
-(when (>= emacs-major-version 26)
-  (auto-save-visited-mode 1)
-  (setq auto-save-visited-interval 3))
-
-;; auto pair
-(electric-pair-mode 1)
-
-(put 'upcase-region 'disabled nil)
-
-(setq backup-directory-alist '((".*" . "/tmp/emacs-bak")))
-(setq enable-recursive-minibuffers t)
-(with-eval-after-load 'chistory
-  (setq list-command-history-max 120)
-  (define-key command-history-map (kbd "<return>") 'command-history-repeat))
-(windmove-default-keybindings)
-(setq help-window-select t)
-;; FIXME:
-;; (define-advice split-window (:after ()) (other-window 1))
-
 ;; functions
 (defun my/vsp (filename)
   "Split window vertically like vim."
@@ -71,14 +43,15 @@
 
 (defun open-init-file()
   (interactive)
-  (find-file "~/.config/emacs/init.el"))
+  (find-file (cond
+	       ((string= system-type "gnu/linux")
+		 "~/.config/emacs/init.el")
+	       ((string= system-type "windows-nt")
+		 "C:\\Users\\aimi\\.emacs.d\\init.el")
+	       (t (error "Unsupported system: %s" system-type)))))
 (global-set-key (kbd "<f2>") 'open-init-file)
 
 (global-set-key "\C-x\C-n" 'other-window)
-(defun other-window-backward (n)
-  "Select Nth previous window."
-  (interactive "p")
-  (other-window (- n)))
 (global-set-key "\C-x\C-p" 'other-window-backward)
 
 ;;; advice
@@ -189,25 +162,67 @@ unless given a prefix argument."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(lisp-indent-offset 2)
- '(lsp-headerline-breadcrumb-enable nil)
- '(menu-bar-mode nil)
- '(scroll-bar-mode nil)
- '(tool-bar-mode nil)
- '(visual-replace-default-to-full-scope t))
+  '(lsp-headerline-breadcrumb-enable nil)
+  '(menu-bar-mode nil)
+  '(scroll-bar-mode nil)
+  '(tool-bar-mode nil)
+  '(visual-replace-default-to-full-scope t))
 
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:weight regular :height 170 :width normal :family "DejaVu Sans Mono")))))
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+  '(default ((t (:weight regular :height 170 :width normal :family "DejaVu Sans Mono")))))
 
 
 ;; packages
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default 1)
 
+(use-package emacs
+  :init
+  ;; lsp performance related
+  (setq gc-cons-threshold 100000000)
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (setq help-window-select t)
+  (setq make-backup-files nil)
+  (setq enable-recursive-minibuffers t)
+  
+  :config
+  ;; tree-sitter
+  (setq treesit-language-source-alist
+    `(,(if (eq 'windows-nt system-type)
+	 '(janet-simple
+            . ("https://github.com/sogaiu/tree-sitter-janet-simple"
+		nil nil "gcc.exe"))
+	 '(janet-simple
+            . ("https://github.com/sogaiu/tree-sitter-janet-simple")))
+       (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
+       (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+       (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+       (zig . ("https://github.com/tree-sitter-grammars/tree-sitter-zig"))))
+  
+  (mapc #'(lambda (grammar) (unless (treesit-language-available-p grammar)
+			      (treesit-install-language-grammar grammar)))
+    (mapcar #'car treesit-language-source-alist))
+  (setq debug-on-error t)
+  ;; (setq help-window-select t)
+  (global-display-line-numbers-mode)
+
+  ;; real auto save
+  (when (>= emacs-major-version 26)
+    (auto-save-visited-mode 1)
+    (setq auto-save-visited-interval 1))
+
+  ;; auto pair
+  (electric-pair-mode 1)
+
+  (with-eval-after-load 'chistory
+    (setq list-command-history-max 120)
+    (define-key command-history-map (kbd "<return>") 'command-history-repeat))
+  (windmove-default-keybindings))
+				 
 (use-package consult)
 
 (use-package vertico
@@ -221,9 +236,32 @@ unless given a prefix argument."
   ;; Tune the global completion style settings to your liking!
   ;; This affects the minibuffer and non-lsp completion at point.
   (setq completion-styles '(orderless partial-completion basic)
-        completion-category-defaults nil
+    completion-category-defaults nil
     completion-category-overrides nil))
 
+(use-package janet-ts-mode
+  :straight (janet-ts-mode :host github
+	      :repo "sogaiu/janet-ts-mode"
+	      :files ("*.el")))
+
+
+(use-package flycheck-janet
+  :straight (flycheck-janet :host github
+	      :repo "sogaiu/flycheck-janet"
+	      :files ("*.el")))
+
+(use-package ajrepl
+  :straight (ajrepl :host github
+	      :repo "sogaiu/ajrepl"
+	      :files ("*.el" "ajrepl"))
+  :hook
+  (janet-ts-mode . ajrepl-interaction-mode))
+
+
+
+(use-package flycheck
+  :config
+  (global-flycheck-mode))
 ;; from https://github.com/minad/corfu/wiki#advanced-example-configuration-with-orderless
 (use-package lsp-mode
   :custom
@@ -231,6 +269,7 @@ unless given a prefix argument."
 
   :init
   (setq lsp-keymap-prefix "C-c C-l")
+  (setq lsp-idle-delay 0.500)
   (defun my/orderless-dispatch-flex-first (_pattern index _total)
     (and (eq index 0) 'orderless-flex))
 
@@ -261,13 +300,10 @@ unless given a prefix argument."
 
 ;; more visual search-replace
 (use-package visual-replace
-  :defer t
-  :bind (("M-%" . visual-replace)
-	  :map isearch-mode-map
-	  ("M-%" . visual-replace-from-isearch))
+  :defer nil
   :config
-  (define-key visual-replace-mode-map (kbd "M-%")
-    visual-replace-secondary-mode-map))
+  (visual-replace-global-mode 1))
+
 
 (use-package corfu
   :custom
@@ -283,118 +319,126 @@ unless given a prefix argument."
     :config
     (which-key-mode))
 
-(use-package sly)
-(setq inferior-lisp-program "sbcl")
+(use-package sly
+  :config
+  (setq inferior-lisp-program "sbcl"))
 
-(use-package vterm)
+(straight-register-package 'vterm)
+(unless (string= system-type "windows-nt")
+  (use-package vterm))
 
+(use-package catppuccin-theme
+  :config
+  (load-theme 'catppuccin :no-confirm)
+  (setq catppuccin-flavor 'latte) ;; or 'latte, 'macchiato, or 'mocha
+  (catppuccin-reload))
 
-(use-package catppuccin-theme)
-(load-theme 'catppuccin :no-confirm)
-(setq catppuccin-flavor 'latte) ;; or 'latte, 'macchiato, or 'mocha
-(catppuccin-reload)
+(use-package meow
+  :init
+  ;; QWERTY mode for moew
+  (defun meow-setup ()
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    (meow-define-state disabled
+      "meow state to disable meow."
+      :keymap (make-keymap))
+    (setq meow-mode-state-list
+      '((conf-mode . normal)
+	 (fundamental-mode . normal)
+	 (help-mode . motion)
+	 (prog-mode . normal)
+	 (text-mode . normal)
+	 (vterm-mode . disabled)))
+    (meow-define-keys
+      'insert
+      '("C-;" . "<escape>")
+      ;; '("C-[" . meow-insert-exit)
+      )
+    (meow-motion-define-key
+      '("j" . meow-next)
+      '("k" . meow-prev)
+      '("<escape>" . ignore))
+    (meow-leader-define-key
+      ;; Use SPC (0-9) for digit arguments.
+      '("1" . meow-digit-argument)
+      '("2" . meow-digit-argument)
+      '("3" . meow-digit-argument)
+      '("4" . meow-digit-argument)
+      '("5" . meow-digit-argument)
+      '("6" . meow-digit-argument)
+      '("7" . meow-digit-argument)
+      '("8" . meow-digit-argument)
+      '("9" . meow-digit-argument)
+      '("0" . meow-digit-argument)
+      '("/" . meow-keypad-describe-key)
+      '("?" . meow-cheatsheet))
+    (meow-normal-define-key
+      '("0" . meow-expand-0)
+      '("9" . meow-expand-9)
+      '("8" . meow-expand-8)
+      '("7" . meow-expand-7)
+      '("6" . meow-expand-6)
+      '("5" . meow-expand-5)
+      '("4" . meow-expand-4)
+      '("3" . meow-expand-3)
+      '("2" . meow-expand-2)
+      '("1" . meow-expand-1)
+      '("-" . negative-argument)
+      '(";" . meow-reverse)
+      '("," . meow-inner-of-thing)
+      '("." . meow-bounds-of-thing)
+      '("[" . meow-beginning-of-thing)
+      '("]" . meow-end-of-thing)
+      '("a" . meow-append)
+      '("A" . meow-open-below)
+      '("b" . meow-back-word)
+      '("B" . meow-back-symbol)
+      '("c" . meow-change)
+      '("d" . meow-delete)
+      '("D" . meow-backward-delete)
+      '("e" . meow-next-word)
+      '("E" . meow-next-symbol)
+      '("f" . meow-find)
+      '("g" . meow-cancel-selection)
+      '("G" . meow-grab)
+      '("h" . meow-left)
+      '("H" . meow-left-expand)
+      '("i" . meow-insert)
+      '("I" . meow-open-above)
+      '("j" . meow-next)
+      '("J" . meow-next-expand)
+      '("k" . meow-prev)
+      '("K" . meow-prev-expand)
+      '("l" . meow-right)
+      '("L" . meow-right-expand)
+      '("m" . meow-join)
+      '("n" . meow-search)
+      '("o" . meow-block)
+      '("O" . meow-to-block)
+      '("p" . meow-yank)
+      '("q" . meow-quit)
+      '("Q" . meow-goto-line)
+      '("r" . meow-replace)
+      '("R" . meow-swap-grab)
+      '("s" . meow-kill)
+      '("t" . meow-till)
+      '("u" . meow-undo)
+      '("U" . meow-undo-in-selection)
+      '("v" . meow-visit)
+      '("w" . meow-mark-word)
+      '("W" . meow-mark-symbol)
+      '("x" . meow-line)
+      '("X" . meow-goto-line)
+      '("y" . meow-save)
+      '("Y" . meow-sync-grab)
+      '("z" . meow-pop-selection)
+      '("'" . repeat)
+      '("<escape>" . ignore)))
+  :config
+  (meow-setup)
+  (meow-global-mode 1))
 
-(use-package meow)
-;; QWERTY mode for moew
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-define-state disabled
-    "meow state to disable meow."
-    :keymap (make-keymap))
-  (setq meow-mode-state-list
-    '((conf-mode . normal)
-       (fundamental-mode . normal)
-       (help-mode . motion)
-       (prog-mode . normal)
-       (text-mode . normal)
-       (vterm-mode . disabled)))
-  (meow-define-keys
-   'insert
-    ;; '("C-[" . "<escape>")
-    '("C-[" . meow-insert-exit))
-  (meow-motion-define-key
-    '("j" . meow-next)
-    '("k" . meow-prev)
-    '("<escape>" . ignore))
-  (meow-leader-define-key
-    ;; Use SPC (0-9) for digit arguments.
-    '("1" . meow-digit-argument)
-    '("2" . meow-digit-argument)
-    '("3" . meow-digit-argument)
-    '("4" . meow-digit-argument)
-    '("5" . meow-digit-argument)
-    '("6" . meow-digit-argument)
-    '("7" . meow-digit-argument)
-    '("8" . meow-digit-argument)
-    '("9" . meow-digit-argument)
-    '("0" . meow-digit-argument)
-    '("/" . meow-keypad-describe-key)
-    '("?" . meow-cheatsheet))
-  (meow-normal-define-key
-    '("0" . meow-expand-0)
-    '("9" . meow-expand-9)
-    '("8" . meow-expand-8)
-    '("7" . meow-expand-7)
-    '("6" . meow-expand-6)
-    '("5" . meow-expand-5)
-    '("4" . meow-expand-4)
-    '("3" . meow-expand-3)
-    '("2" . meow-expand-2)
-    '("1" . meow-expand-1)
-    '("-" . negative-argument)
-    '(";" . meow-reverse)
-    '("," . meow-inner-of-thing)
-    '("." . meow-bounds-of-thing)
-    '("[" . meow-beginning-of-thing)
-    '("]" . meow-end-of-thing)
-    '("a" . meow-append)
-    '("A" . meow-open-below)
-    '("b" . meow-back-word)
-    '("B" . meow-back-symbol)
-    '("c" . meow-change)
-    '("d" . meow-delete)
-    '("D" . meow-backward-delete)
-    '("e" . meow-next-word)
-    '("E" . meow-next-symbol)
-    '("f" . meow-find)
-    '("g" . meow-cancel-selection)
-    '("G" . meow-grab)
-    '("h" . meow-left)
-    '("H" . meow-left-expand)
-    '("i" . meow-insert)
-    '("I" . meow-open-above)
-    '("j" . meow-next)
-    '("J" . meow-next-expand)
-    '("k" . meow-prev)
-    '("K" . meow-prev-expand)
-    '("l" . meow-right)
-    '("L" . meow-right-expand)
-    '("m" . meow-join)
-    '("n" . meow-search)
-    '("o" . meow-block)
-    '("O" . meow-to-block)
-    '("p" . meow-yank)
-    '("q" . meow-quit)
-    '("Q" . meow-goto-line)
-    '("r" . meow-replace)
-    '("R" . meow-swap-grab)
-    '("s" . meow-kill)
-    '("t" . meow-till)
-    '("u" . meow-undo)
-    '("U" . meow-undo-in-selection)
-    '("v" . meow-visit)
-    '("w" . meow-mark-word)
-    '("W" . meow-mark-symbol)
-    '("x" . meow-line)
-    '("X" . meow-goto-line)
-    '("y" . meow-save)
-    '("Y" . meow-sync-grab)
-    '("z" . meow-pop-selection)
-    '("'" . repeat)
-    '("<escape>" . ignore)))
-(require 'meow)
-(meow-setup)
-(meow-global-mode 1)
+;; It's magit!
+(use-package magit)
 
 ;; kernel c style
 (defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
