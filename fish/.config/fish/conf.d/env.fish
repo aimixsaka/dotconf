@@ -3,7 +3,8 @@ set -gx XDG_CACHE_HOME $HOME/.cache
 set -gx XDG_DATA_HOME $HOME/.local/share
 
 set -gx EDITOR vis
-set -gx TERM alacritty
+set -gx TERM kitty
+set -gx SHELL fish
 
 set -gx USE_CCACHE 1
 set -gx CCACHE_EXEC /usr/bin/ccache
