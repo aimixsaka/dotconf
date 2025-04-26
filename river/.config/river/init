@@ -8,6 +8,7 @@ riverctl spawn "swaybg -m fill -i ~/Pictures/shana.jpg"
 riverctl spawn "mako"
 riverctl spawn "blueman-applet"
 riverctl spawn "gammastep -c /home/aimi/.config/gammastep/config.ini"
+riverctl spawn "gammastep-indicator"
 riverctl spawn "waybar"
 riverctl spawn "fcitx5 -d"
 riverctl spawn "copyq --start-server"
@@ -37,7 +38,7 @@ riverctl map normal Print spawn /home/aimi/workspace/shell/screenshot.sh
 #riverctl keyboard-layout -options "ctrl:nocaps,altwin:swap_alt_win" us
 riverctl keyboard-layout -options "ctrl:nocaps" us
 #riverctl map normal Super Return spawn "if pgrep alacritty &>/dev/null; then alacritty msg create-window; else alacritty; fi"
-riverctl map normal Super Return spawn "ghostty"
+riverctl map normal Super Return spawn "kitty"
 riverctl map normal Super D spawn 'wofi --show drun --lines=5 --prompt=""'
 
 riverctl map normal Super Backspace spawn "pamixer -t"
@@ -177,7 +178,7 @@ riverctl rule-add -app-id '*' ssd
 riverctl background-color 0x002b36
 riverctl border-width 4
 riverctl border-color-focused 0xe44549
-riverctl border-color-unfocused 0xe190ee
+#riverctl border-color-unfocused 0xe190ee
 
 # Set keyboard repeat rate
 riverctl set-repeat 50 300
