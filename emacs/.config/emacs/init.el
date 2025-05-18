@@ -1,6 +1,35 @@
-;;; -*- lexical-binding: t -*-
+;;;  ________                                                _______                 __                            __  -*- lexical-binding: t; -*-
+;;; /        |                                              /       \               /  |                          /  |
+;;; $$$$$$$$/ _____  ____   ______   _______  _______       $$$$$$$  | ______   ____$$ | ______   ______   _______$$ |   __
+;;; $$ |__   /     \/    \ /      \ /       |/       |      $$ |__$$ |/      \ /    $$ |/      \ /      \ /       $$ |  /  |
+;;; $$    |  $$$$$$ $$$$  |$$$$$$  /$$$$$$$//$$$$$$$/       $$    $$</$$$$$$  /$$$$$$$ /$$$$$$  /$$$$$$  /$$$$$$$/$$ |_/$$/
+;;; $$$$$/   $$ | $$ | $$ |/    $$ $$ |     $$      \       $$$$$$$  $$    $$ $$ |  $$ $$ |  $$/$$ |  $$ $$ |     $$   $$<
+;;; $$ |_____$$ | $$ | $$ /$$$$$$$ $$ \_____ $$$$$$  |      $$ |__$$ $$$$$$$$/$$ \__$$ $$ |     $$ \__$$ $$ \_____$$$$$$  \
+;;; $$       $$ | $$ | $$ $$    $$ $$       /     $$/       $$    $$/$$       $$    $$ $$ |     $$    $$/$$       $$ | $$  |
+;;; $$$$$$$$/$$/  $$/  $$/ $$$$$$$/ $$$$$$$/$$$$$$$/        $$$$$$$/  $$$$$$$/ $$$$$$$/$$/       $$$$$$/  $$$$$$$/$$/   $$/
 
-;;; package manager start
+;;; Minimal init.el
+
+;;; Contents:
+;;;
+;;;  - Basic settings
+;;;  - Discovery aids
+;;;  - Minibuffer/completion settings
+;;;  - Interface enhancements/defaults
+;;;  - Tab-bar configuration
+;;;  - Theme
+;;;  - Optional extras
+;;;  - Built-in customization framework
+
+;;; Guardrail
+
+(when (< emacs-major-version 29)
+  (error "Emacs Bedrock only works with Emacs 29 and newer; you have version %s" emacs-major-version))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Setup straight.el
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar bootstrap-version)
 (let ((bootstrap-file
 	(expand-file-name
@@ -16,456 +45,239 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-;;; package manager end
 
-;; functions
-(defun my/vsp (filename)
-  "Split window vertically like vim."
-  (interactive "FFile to vertical split: ")
-  (split-window-right)
-  (other-window 1)
-  (find-file filename))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default 1)
 
-(defun my/sp (filename)
-  "Split window vertically like vim."
-  (interactive "FFile to vertical split: ")
-  (split-window-below)
-  (other-window 1)
-  (find-file filename))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Basic settings
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; keybinding
-(global-set-key (kbd "C-c p") 'eval-print-last-sexp)
-(defun undo-yank (arg)
-  "Undo the yank you just did. Really, adjust just-yanked text like \\[yank-pop] does, but in the opposite direction."
-  (interactive "p")
-  (yank-pop (- arg)))
-(global-set-key (kbd "C-M-Y") 'undo-yank)
+;; Package initialization
+;;
+;; We'll stick to the built-in GNU and non-GNU ELPAs (Emacs Lisp Package
+;; Archive) for the base install, but there are some other ELPAs you could look
+;; at if you want more packages. MELPA in particular is very popular. See
+;; instructions at:
+;;
+;;    https://melpa.org/#/getting-started
+;;
+;; You can simply uncomment the following if you'd like to get started with
+;; MELPA packages quickly:
+;;
+;; (with-eval-after-load 'package
+;;   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-(defun open-init-file()
-  (interactive)
-  (find-file (cond
-	       ((string= system-type "gnu/linux")
-		 "~/.config/emacs/init.el")
-	       ((string= system-type "windows-nt")
-		 "C:\\Users\\aimi\\.emacs.d\\init.el")
-	       (t (error "Unsupported system: %s" system-type)))))
-(global-set-key (kbd "<f2>") 'open-init-file)
+;; If you want to turn off the welcome screen, uncomment this
+;(setopt inhibit-splash-screen t)
 
-(global-set-key "\C-x\C-n" 'other-window)
-(global-set-key "\C-x\C-p" 'other-window-backward)
+(setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
+(setopt display-time-default-load-average nil) ; this information is useless for most
 
-;;; advice
-(defadvice switch-to-buffer (before existing-buffer
-			      activate compile)
-  "When activate, switch to existing buffers only,
-unless given a prefix argument."
-  (interactive
-    (list (read-buffer "Switch to buffer:"
-	    (other-buffer)
-	    (null current-prefix-arg)))))
+;; Automatically reread from disk if the underlying file changes
+(setopt auto-revert-avoid-polling t)
+;; Some systems don't do file notifications well; see
+;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
+(setopt auto-revert-interval 5)
+(setopt auto-revert-check-vc-info t)
+(global-auto-revert-mode)
+
+;; Save history of minibuffer
+(savehist-mode)
+
+;; Move through windows with Ctrl-<arrow keys>
+(windmove-default-keybindings 'control) ; You can use other modifiers here
+
+;; Fix archaic defaults
+(setopt sentence-end-double-space nil)
+
+;; Make right-click do something sensible
+(when (display-graphic-p)
+  (context-menu-mode))
+
+;; Don't litter file system with *~ backup files; put them all inside
+;; ~/.emacs.d/backup or wherever
+(defun bedrock--backup-file-name (fpath)
+  "Return a new file path of a given file path.
+If the new path's directories does not exist, create them."
+  (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
+    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+    backupFilePath))
+(setopt make-backup-file-name-function 'bedrock--backup-file-name)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Discovery aids
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Show the help buffer after startup
+(add-hook 'after-init-hook 'help-quick)
+
+;; which-key: shows a popup of available keybindings when typing a long key
+;; sequence (e.g. C-x ...)
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Minibuffer/completion settings
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; For help, see: https://www.masteringemacs.org/article/understanding-minibuffer-completion
+
+(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
+(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+(setopt completions-detailed t)                        ; Show annotations
+(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
+(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+
+(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
+(setopt completions-max-height 20)                     ; This is arbitrary
+(setopt completions-detailed t)
+(setopt completions-format 'one-column)
+(setopt completions-group t)
+(setopt completion-auto-select 'second-tab)            ; Much more eager
+;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
+
+;; For a fancier built-in completion option, try ido-mode,
+;; icomplete-vertical, or fido-mode. See also the file extras/base.el
+
+;(icomplete-vertical-mode)
+;(fido-vertical-mode)
+;(setopt icomplete-delay-completions-threshold 4000)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Interface enhancements/defaults
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Mode line information
+(setopt line-number-mode t)                        ; Show current line in modeline
+(setopt column-number-mode t)                      ; Show column as well
+
+(setopt x-underline-at-descent-line nil)           ; Prettier underlines
+(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+
+(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
+(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+
+;; Enable horizontal scrolling
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-flip-direction t)
+
+;; We won't set these, but they're good to know about
+;;
+;; (setopt indent-tabs-mode nil)
+;; (setopt tab-width 4)
+
+;; Misc. UI tweaks
+(blink-cursor-mode -1)                                ; Steady cursor
+(pixel-scroll-precision-mode)                         ; Smooth scrolling
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
 
 
-(defvar unscroll-point (make-marker)
-  "Cursor position for next call to `unscroll'.")
-(defvar unscroll-window-start (make-marker)
-  "Window start for next call to `unscroll'.")
-(defvar unscroll-hscroll nil
-  "Hscroll for next call to `unscroll'.")
-(defun unscroll-maybe-remember ()
-  (unless (get last-command 'unscrollable)
-    (set-marker unscroll-point (point))
-    (set-marker unscroll-window-start (window-start))
-    (setq unscroll-hscroll (window-hscroll))))
+;; Display line numbers in programming mode
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(setopt display-line-numbers-width 3)           ; Set a minimum width
 
-(defadvice scroll-up (before remember-for-unscroll
-		       activate compile)
-  (put 'scroll-up 'unscrollable t)
-  (unscroll-maybe-remember))
-(defadvice scroll-down (before remember-for-unscroll
-			 activate compile)
-  (put 'scroll-down 'unscrollable t)
-  (unscroll-maybe-remember))
-(defadvice scroll-left (before remember-for-unscroll
-			 activate compile)
-  (put 'scroll-left 'unscrollable t)
-  (unscroll-maybe-remember))
-(defadvice scroll-right (before remember-for-unscroll
-			  activate compile)
-  (put 'scroll-right 'unscrollable t)
-  (unscroll-maybe-remember))
+;; Nice line wrapping when working with text
+(add-hook 'text-mode-hook 'visual-line-mode)
 
-(defun unscroll ()
-  "Revert to `unscroll-point' and `unscroll-window-start'."
-  (interactive)
-  (if (not unscroll-point)
-    (error "Cannot unscroll yet"))
-  (goto-char unscroll-point)
-  (set-window-start nil unscroll-window-start)
-  (set-window-hscroll nil unscroll-hscroll))
+;; Modes to highlight the current line with
+(let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
+  (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Tab-bar configuration
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Show the tab-bar as soon as tab-bar functions are invoked
+(setopt tab-bar-show 1)
 
-(defcustom insert-time-format "%X"
-  "Format for \\[insert-time] (c.f. `format-time-string').")
-(defcustom insert-date-format "%x"
-  "Format for \\[insert-date] (c.f. `format-time-string').")
-(defun insert-time ()
-  "Insert the current time according to `insert-time-format'."
-  (interactive "*")
-  (insert (format-time-string insert-time-format
-	    (current-time))))
-(defun insert-date ()
-  "Insert the current date according to `insert-date-format'."
-  (interactive "*")
-  (insert (format-time-string insert-date-format
-	    (current-time))))
+;; Add the time to the tab-bar, if visible
+(add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+(add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+(setopt display-time-format "%a %F %T")
+(setopt display-time-interval 1)
+(display-time-mode)
 
-(defun insert-date-time ()
-  "Insert date (from `insert-date') and time (from `insert-time')."
-  (interactive "*")
-  (insert-date)
-  (insert " ")
-  (insert-time))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Theme
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defcustom writestamp-format "%Y-%m-%d %T"
-  "Format for writestamps (c.f. `format-time-string').")
-(defcustom writestamp-prefix "WRITESTAMP(("
-  "Unique string identifying start of writestamps.")
-(defcustom writestamp-suffix "))"
-  "String that terminates a writestamps.")
+(use-package emacs
+  :config
+  (load-theme 'modus-operandi))          ; for light theme, use modus-operandi
 
-;;; hooks
-(add-hook 'write-file-hooks 'update-writestamps)
-(defun update-writestamps ()
-  "Find writestamps and replace them with the current time"
-  (save-excursion
-    (save-restriction
-      (save-match-data
-	(widen)
-	(goto-char (point-min))
-	(while (re-search-forward (concat "^" (regexp-quote writestamp-prefix))
-		 nil t)
-	  (let ((start (point)))
-	    (when (re-search-forward (concat (regexp-quote writestamp-suffix) "$")
-		    (line-end-position) t)
-	      (delete-region start (match-beginning 0))
-	      (goto-char start)
-	      (insert (format-time-string writestamp-format
-			(current-time)))))))))
-  nil)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Optional extras
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Uncomment the (load-file …) lines or copy code from the extras/ elisp files
+;; as desired
 
-;;; custom
+;; UI/UX enhancements mostly focused on minibuffer and autocompletion interfaces
+;; These ones are *strongly* recommended!
+;(load-file (expand-file-name "extras/base.el" user-emacs-directory))
+
+;; Packages for software development
+;(load-file (expand-file-name "extras/dev.el" user-emacs-directory))
+
+;; Vim-bindings in Emacs (evil-mode configuration)
+;(load-file (expand-file-name "extras/vim-like.el" user-emacs-directory))
+
+;; Org-mode configuration
+;; WARNING: need to customize things inside the elisp file before use! See
+;; the file extras/org-intro.txt for help.
+;(load-file (expand-file-name "extras/org.el" user-emacs-directory))
+
+;; Email configuration in Emacs
+;; WARNING: needs the `mu' program installed; see the elisp file for more
+;; details.
+;(load-file (expand-file-name "extras/email.el" user-emacs-directory))
+
+;; Tools for academic researchers
+;(load-file (expand-file-name "extras/researcher.el" user-emacs-directory))
+
+;; modal editing
+(load-file (expand-file-name "extras/meow.el" user-emacs-directory))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Built-in customization framework
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-  '(lsp-headerline-breadcrumb-enable nil)
-  '(menu-bar-mode nil)
-  '(scroll-bar-mode nil)
-  '(tool-bar-mode nil)
-  '(visual-replace-default-to-full-scope t))
-
+ )
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  '(default ((t (:weight regular :height 170 :width normal :family "DejaVu Sans Mono")))))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
-
-;; packages
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default 1)
-
-(use-package emacs
-  :init
-  ;; lsp performance related
-  (setq gc-cons-threshold 100000000)
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq help-window-select t)
-  (setq make-backup-files nil)
-  (setq enable-recursive-minibuffers t)
-  
-  :config
-  ;; tree-sitter
-  (setq treesit-language-source-alist
-    `(,(if (eq 'windows-nt system-type)
-	 '(janet-simple
-            . ("https://github.com/sogaiu/tree-sitter-janet-simple"
-		nil nil "gcc.exe"))
-	 '(janet-simple
-            . ("https://github.com/sogaiu/tree-sitter-janet-simple")))
-       (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
-       (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-       (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-       (zig . ("https://github.com/tree-sitter-grammars/tree-sitter-zig"))))
-  
-  (mapc #'(lambda (grammar) (unless (treesit-language-available-p grammar)
-			      (treesit-install-language-grammar grammar)))
-    (mapcar #'car treesit-language-source-alist))
-  (setq debug-on-error t)
-  ;; (setq help-window-select t)
-  (global-display-line-numbers-mode)
-
-  ;; real auto save
-  (when (>= emacs-major-version 26)
-    (auto-save-visited-mode 1)
-    (setq auto-save-visited-interval 1))
-
-  ;; auto pair
-  (electric-pair-mode 1)
-
-  (with-eval-after-load 'chistory
-    (setq list-command-history-max 120)
-    (define-key command-history-map (kbd "<return>") 'command-history-repeat))
-  (windmove-default-keybindings))
-				 
-(use-package consult)
-
-(use-package vertico
-  :init
-  (vertico-mode 1))
-
-(use-package cape)
-
-(use-package orderless
-  :init
-  ;; Tune the global completion style settings to your liking!
-  ;; This affects the minibuffer and non-lsp completion at point.
-  (setq completion-styles '(orderless partial-completion basic)
-    completion-category-defaults nil
-    completion-category-overrides nil))
-
-(use-package janet-ts-mode
-  :straight (janet-ts-mode :host github
-	      :repo "sogaiu/janet-ts-mode"
-	      :files ("*.el")))
-
-
-(use-package flycheck-janet
-  :straight (flycheck-janet :host github
-	      :repo "sogaiu/flycheck-janet"
-	      :files ("*.el")))
-
-(use-package ajrepl
-  :straight (ajrepl :host github
-	      :repo "sogaiu/ajrepl"
-	      :files ("*.el" "ajrepl"))
-  :hook
-  (janet-ts-mode . ajrepl-interaction-mode))
-
-
-
-(use-package flycheck
-  :config
-  (global-flycheck-mode))
-;; from https://github.com/minad/corfu/wiki#advanced-example-configuration-with-orderless
-(use-package lsp-mode
-  :custom
-  (lsp-completion-provider :none) ;; we use Corfu!
-
-  :init
-  (setq lsp-keymap-prefix "C-c C-l")
-  (setq lsp-idle-delay 0.500)
-  (defun my/orderless-dispatch-flex-first (_pattern index _total)
-    (and (eq index 0) 'orderless-flex))
-
-  (defun my/lsp-mode-setup-completion ()
-    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-          '(orderless))
-    ;; Optionally configure the first word as flex filtered.
-    (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
-    ;; Optionally configure the cape-capf-buster.
-    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
-
-  :hook
-  ((lsp-completion-mode . my/lsp-mode-setup-completion)
-    (lsp-mode . lsp-enable-which-key-integration)
-    (c-mode . lsp))
-  :commands lsp)
-
-;; (use-package lsp-mode
-;;   :init
-;;   (setq lsp-keymap-prefix "C-l")
-;;   :hook
-;;   ((c-mode . lsp)
-;;    (lsp-mode . lsp-enable-which-key-integration))
-;;   :commands lsp)
-
-;; project or dired level occur mode
-(use-package noccur)
-
-;; more visual search-replace
-(use-package visual-replace
-  :defer nil
-  :config
-  (visual-replace-global-mode 1))
-
-
-(use-package corfu
-  :custom
-  (corfu-auto t)
-  (corfu-quit-at-boundary t)     ;; Automatically quit at word boundary
-  (corfu-quit-no-match t)
-  :init
-  (global-corfu-mode 1))
-			
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package dap-mode)
-(use-package which-key
-    :config
-    (which-key-mode))
-
-(use-package sly
-  :config
-  (setq inferior-lisp-program "sbcl"))
-
-(straight-register-package 'vterm)
-(unless (string= system-type "windows-nt")
-  (use-package vterm))
-
-(use-package catppuccin-theme
-  :config
-  (load-theme 'catppuccin :no-confirm)
-  (setq catppuccin-flavor 'latte) ;; or 'latte, 'macchiato, or 'mocha
-  (catppuccin-reload))
-
-(use-package meow
-  :init
-  ;; QWERTY mode for moew
-  (defun meow-setup ()
-    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    (meow-define-state disabled
-      "meow state to disable meow."
-      :keymap (make-keymap))
-    (setq meow-mode-state-list
-      '((conf-mode . normal)
-	 (fundamental-mode . normal)
-	 (help-mode . motion)
-	 (prog-mode . normal)
-	 (text-mode . normal)
-	 (vterm-mode . disabled)))
-    (meow-define-keys
-      'insert
-      '("C-;" . "<escape>")
-      ;; '("C-[" . meow-insert-exit)
-      )
-    (meow-motion-define-key
-      '("j" . meow-next)
-      '("k" . meow-prev)
-      '("<escape>" . ignore))
-    (meow-leader-define-key
-      ;; Use SPC (0-9) for digit arguments.
-      '("1" . meow-digit-argument)
-      '("2" . meow-digit-argument)
-      '("3" . meow-digit-argument)
-      '("4" . meow-digit-argument)
-      '("5" . meow-digit-argument)
-      '("6" . meow-digit-argument)
-      '("7" . meow-digit-argument)
-      '("8" . meow-digit-argument)
-      '("9" . meow-digit-argument)
-      '("0" . meow-digit-argument)
-      '("/" . meow-keypad-describe-key)
-      '("?" . meow-cheatsheet))
-    (meow-normal-define-key
-      '("0" . meow-expand-0)
-      '("9" . meow-expand-9)
-      '("8" . meow-expand-8)
-      '("7" . meow-expand-7)
-      '("6" . meow-expand-6)
-      '("5" . meow-expand-5)
-      '("4" . meow-expand-4)
-      '("3" . meow-expand-3)
-      '("2" . meow-expand-2)
-      '("1" . meow-expand-1)
-      '("-" . negative-argument)
-      '(";" . meow-reverse)
-      '("," . meow-inner-of-thing)
-      '("." . meow-bounds-of-thing)
-      '("[" . meow-beginning-of-thing)
-      '("]" . meow-end-of-thing)
-      '("a" . meow-append)
-      '("A" . meow-open-below)
-      '("b" . meow-back-word)
-      '("B" . meow-back-symbol)
-      '("c" . meow-change)
-      '("d" . meow-delete)
-      '("D" . meow-backward-delete)
-      '("e" . meow-next-word)
-      '("E" . meow-next-symbol)
-      '("f" . meow-find)
-      '("g" . meow-cancel-selection)
-      '("G" . meow-grab)
-      '("h" . meow-left)
-      '("H" . meow-left-expand)
-      '("i" . meow-insert)
-      '("I" . meow-open-above)
-      '("j" . meow-next)
-      '("J" . meow-next-expand)
-      '("k" . meow-prev)
-      '("K" . meow-prev-expand)
-      '("l" . meow-right)
-      '("L" . meow-right-expand)
-      '("m" . meow-join)
-      '("n" . meow-search)
-      '("o" . meow-block)
-      '("O" . meow-to-block)
-      '("p" . meow-yank)
-      '("q" . meow-quit)
-      '("Q" . meow-goto-line)
-      '("r" . meow-replace)
-      '("R" . meow-swap-grab)
-      '("s" . meow-kill)
-      '("t" . meow-till)
-      '("u" . meow-undo)
-      '("U" . meow-undo-in-selection)
-      '("v" . meow-visit)
-      '("w" . meow-mark-word)
-      '("W" . meow-mark-symbol)
-      '("x" . meow-line)
-      '("X" . meow-goto-line)
-      '("y" . meow-save)
-      '("Y" . meow-sync-grab)
-      '("z" . meow-pop-selection)
-      '("'" . repeat)
-      '("<escape>" . ignore)))
-  :config
-  (meow-setup)
-  (meow-global-mode 1))
-
-;; It's magit!
-(use-package magit)
-
-;; kernel c style
-(defun linux-kernel-coding-style/c-lineup-arglist-tabs-only (ignored)
-  "Line up argument lists by tabs, not spaces"
-  (let* ((anchor (c-langelem-pos c-syntactic-element))
-   (column (c-langelem-2nd-pos c-syntactic-element))
-   (offset (- (1+ column) anchor))
-   (steps (floor offset c-basic-offset)))
-    (* (max steps 1)
-      c-basic-offset)))
-
-
-;; Add Linux kernel style
-(add-hook 'c-mode-common-hook
-    (lambda ()
-      (c-add-style "linux-kernel"
-       '("linux" (c-offsets-alist
-            (arglist-cont-nonempty
-             c-lineup-gcc-asm-reg
-             linux-kernel-coding-style/c-lineup-arglist-tabs-only))))))
-
-(defun linux-kernel-coding-style/setup ()
-  (let ((filename (buffer-file-name)))
-    ;; Enable kernel mode for the appropriate files
-    (setq indent-tabs-mode t)
-    (setq tab-width 8)
-    (setq c-basic-offset 8)
-    (c-set-style "linux-kernel")))
-
-(add-hook 'c-mode-hook 'linux-kernel-coding-style/setup)
+(setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))

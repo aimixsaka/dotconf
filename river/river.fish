@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 set -gx _JAVA_AWT_WM_NONREPARENTING 1
 # java application font
-#set -gx XCURSOR_SIZE 24
+set -gx XCURSOR_SIZE 32
 # vapau
 #set -gx VDPAU_TRACE 2
 #set -gx VDPAU_NVIDIA_DEBUG 3
@@ -14,10 +14,6 @@ set -gx _JAVA_AWT_WM_NONREPARENTING 1
 
 # intel
 # use iHD driver for vaapi
-## REMOVE ME
-set -gx VDPAU_DRIVER radeonsi
-set -gx LIBVA_DRIVER_NAME radeonsi
-set -gx MESA_LOADER_DRIVER_OVERRIDE radeonsi
 
 # for steam
 set -gx SDL_VIDEODRIVE wayland
@@ -61,5 +57,6 @@ set -gx XDG_SESSION_TYPE wayland
 #env   __GLX_VENDOR_LIBRARY_NAME,nvidia
 #set -gx WLR_NO_HARDWARE_CURSORS 1
 
+#~/workspace/wayland/river/zig-out/bin/river
 river
 

@@ -13,6 +13,8 @@ riverctl spawn "waybar"
 riverctl spawn "fcitx5 -d"
 riverctl spawn "copyq --start-server"
 riverctl spawn "bash $(dirname -- "${BASH_SOURCE}")/swayidle.sh"
+# flameshot-git working on wlroots based compositor now!
+riverctl spawn "flameshot"
 
 ### See https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html#pointer-acceleration-on-tablets
 ## tablet tablet devices is a flat acceleration, 
@@ -26,19 +28,24 @@ riverctl input pointer-1267-12670-DELL0B64:00_04F3:317E_Touchpad middle-emulatio
 riverctl input pointer-1267-12670-DELL0B64:00_04F3:317E_Touchpad tap enabled
 riverctl input pointer-1267-12670-DELL0B64:00_04F3:317E_Touchpad tap-button-map left-right-middle
 
+
+riverctl input pointer-1118-2496-Microsoft_Surface_Type_Cover_Touchpad natural-scroll enabled
+riverctl input pointer-1118-2496-Microsoft_Surface_Type_Cover_Touchpad click-method button-areas
+riverctl input pointer-1118-2496-Microsoft_Surface_Type_Cover_Touchpad middle-emulation enabled
+riverctl input pointer-1118-2496-Microsoft_Surface_Type_Cover_Touchpad tap enabled
+riverctl input pointer-1118-2496-Microsoft_Surface_Type_Cover_Touchpad tap-button-map left-right-middle
+
 # show mouse
 riverctl map normal Super m spawn "/home/aimi/workspace/tools/wl-find-cursor/wl-find-cursor"
 
-# flameshot-git working on wlroots based compositor now!
 riverctl map normal Super C spawn 'flameshot gui'
-riverctl map normal Super+Shift C spawn 'grim -g "$(slurp)" - | wl-copy && notify-send "Screenshot Copied to Clipboard"'
-#riverctl map normal Super+Shift C spawn 'grim -g $(slurp) - | swappy -f -'
-riverctl map normal Print spawn /home/aimi/workspace/shell/screenshot.sh
+riverctl map normal Super+Shift C spawn 'grim -g "$(slurp)" -t ppm - | satty --filename - --fullscreen --output-filename ~/Pictures/Screenshots/satty-$(date "+%Y%m%d-%H:%M:%S").png'
 
 #riverctl keyboard-layout -options "ctrl:nocaps,altwin:swap_alt_win" us
 riverctl keyboard-layout -options "ctrl:nocaps" us
 #riverctl map normal Super Return spawn "if pgrep alacritty &>/dev/null; then alacritty msg create-window; else alacritty; fi"
-riverctl map normal Super Return spawn "kitty"
+#riverctl map normal Super Return spawn "kitty"
+riverctl map normal Super Return spawn "ghostty"
 riverctl map normal Super D spawn 'wofi --show drun --lines=5 --prompt=""'
 
 riverctl map normal Super Backspace spawn "pamixer -t"
@@ -220,9 +227,10 @@ done
 #riverctl rule-add -app-id "bar" csd
 
 # new window will on top layer
-riverctl default-attach-mode top
+#riverctl default-attach-mode top
 
 # Set the default layout generator to be rivertile and start it.
 # River will send the process group of the init executable SIGTERM on exit.
+way-displays > /tmp/way-displays.${XDG_VTNR}.${USER}.log 2>&1 &
 riverctl default-layout rivertile
 rivertile -view-padding 6 -outer-padding 6 &

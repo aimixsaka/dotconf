@@ -11,8 +11,8 @@ c.url.searchengines = {
 }
 c.fonts.web.size.default = 21
 
-config.bind(",m", "spawn mpv {url}")
-config.bind(",M", "hint links spawn --detach mpv {hint-url}")
+config.bind(",m", "spawn umpv {url}")
+config.bind(",M", "hint --rapid links spawn umpv {hint-url}")
 config.bind("<F2>", "config-edit")
 config.bind("<Ctrl-E>", "config-cycle tabs.show always never")
 config.bind("=", "zoom-in")
