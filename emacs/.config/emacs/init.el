@@ -261,6 +261,8 @@ If the new path's directories does not exist, create them."
 
 ;; modal editing
 (load-file (expand-file-name "extras/meow.el" user-emacs-directory))
+;; ts-modes and magit...
+(load-file (expand-file-name "extras/dev.el" user-emacs-directory))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Built-in customization framework
