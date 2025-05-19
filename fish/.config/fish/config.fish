@@ -3,3 +3,4 @@
 ## Plugins
 # fisher install PatrickF1/fzf.fish
 source /usr/share/autojump/autojump.fish
+direnv hook fish | source

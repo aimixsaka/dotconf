@@ -9,6 +9,8 @@ set -gx SHELL fish
 set -gx USE_CCACHE 1
 set -gx CCACHE_EXEC /usr/bin/ccache
 
+set -gx BROWSER qutebrowser
+
 append_path $HOME/workspace/shell/bash/scripts
 
 append_path $HOME/go/bin

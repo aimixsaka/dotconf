@@ -4,7 +4,6 @@ set -g _WORKDIR "/home/aimi/workspace"
 ## aliases
 
 alias nv "nvim"
-alias cl "clear -x"
 alias ws "cd ~/workspace"
 alias rm "trash"
 alias del "/usr/bin/rm"
@@ -12,6 +11,8 @@ alias del "/usr/bin/rm"
 alias l "ls -l"
 alias lst "ls -al --time birth"
 alias lh "ls -alh"
+
+alias vis "env SHELL=bash vis"
 
 # gdb
 alias gdb "gdb -q"
