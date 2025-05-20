@@ -16,7 +16,7 @@
 	 (help-mode . motion)
 	 (prog-mode . normal)
 	 (text-mode . normal)
-	 (eat-mode . motion)))
+	 (eat-mode . disabled)))
     (meow-define-keys
       'insert
       '("C-;" . "<escape>")
