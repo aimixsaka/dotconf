@@ -33,7 +33,6 @@
 
 ;; Remove menu-bar, scroll-bar and tool-bar
 (menu-bar-mode -1)
-(scroll-bar-mode -1)
 (tool-bar-mode -1)
 
 ;; Theme
@@ -52,5 +51,8 @@
                             (foreground-color . "#000000")
                             (ns-appearance . light)
                             (ns-transparent-titlebar . t)))
+
+;; This need to be put after default-frame-alist
+(scroll-bar-mode -1)
 
 (setq package-enable-at-startup nil)
