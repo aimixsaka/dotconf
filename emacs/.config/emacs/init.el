@@ -47,7 +47,7 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
-(setopt straight-use-package-by-default 1)
+(setopt straight-use-package-by-default t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
