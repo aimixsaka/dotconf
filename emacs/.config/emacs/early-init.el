@@ -27,7 +27,19 @@
 
 ;; Default frame configuration: full screen, good-looking title bar on macOS
 (setq frame-resize-pixelwise t)
-(tool-bar-mode -1)                      ; All these tools are in the menu-bar anyway
+;; Misc. UI tweaks
+(blink-cursor-mode -1)                                ; Steady cursor
+(pixel-scroll-precision-mode)                         ; Smooth scrolling
+
+;; Remove menu-bar, scroll-bar and tool-bar
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+;; Theme
+;; Load themes early to avoid flickering during startup (you need a built-in theme, though)
+(load-theme 'modus-operandi)
+
 (setq default-frame-alist '((fullscreen . maximized)
 
                             ;; You can turn off scroll bars by uncommenting these lines:
