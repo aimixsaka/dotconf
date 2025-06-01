@@ -2,7 +2,7 @@ config.load_autoconfig(False)
 
 c.content.pdfjs = True
 c.zoom.default = "130%"
-c.editor.command = ["neovide", "{file}"]
+c.editor.command = ["ghostty", "-e", "vis", "{file}"]
 c.auto_save.session = True
 c.spellcheck.languages = ["en-US"]
 c.tabs.position = "left"
@@ -20,6 +20,8 @@ c.fonts.web.size.default = 18
 config.bind(",m", "spawn umpv {url}")
 config.bind(",M", "hint links spawn umpv {hint-url}")
 config.bind(";M", "hint --rapid links spawn umpv {hint-url}")
+
+config.bind(",t", "spawn --userscript translate.janet")
 
 config.bind("<F2>", "config-edit")
 config.bind("<Ctrl-E>", "config-cycle tabs.show always never")
