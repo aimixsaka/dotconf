@@ -13,9 +13,9 @@ riverctl spawn "waybar"
 riverctl spawn "fcitx5 -d"
 riverctl spawn "copyq --start-server"
 riverctl spawn "bash $(dirname -- "${BASH_SOURCE}")/swayidle.sh"
+riverctl spawn "emacs --daemon"
 # flameshot-git working on wlroots based compositor now!
 riverctl spawn "flameshot"
-riverctl spawn "emacs --fg-daemon"
 
 
 ### See https://wayland.freedesktop.org/libinput/doc/latest/pointer-acceleration.html#pointer-acceleration-on-tablets
