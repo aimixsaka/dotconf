@@ -1,0 +1,28 @@
+[general]
+import = ["~/.config/alacritty/themes/catppuccin_latte.toml"]
+
+live_config_reload = true
+
+[font]
+size = 18
+
+[font.normal]
+family = "monospace"
+
+[scrolling]
+history = 10000
+multiplier = 10
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[window]
+dynamic_padding = true
+#opacity = 0.85
+opacity = 1
+
+[keyboard]
+bindings = [
+  { key = "F1", mods = "Command | Control | Option | Super | Shift | Alt", mode = "AppCursor|AppKeypad|Search|Vi", action = "ToggleViMode" },
+]

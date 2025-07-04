@@ -1,0 +1,7 @@
+gtk-single-instance = true
+font-family = monospace
+font-size = 18
+theme = catppuccin-latte
+window-decoration = false
+
+keybind = ctrl+left_bracket=text:\x1b

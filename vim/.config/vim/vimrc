@@ -1,0 +1,56 @@
+set nocompatible
+set mouse=a
+
+filetype plugin on
+syntax on
+runtime macros/matchit.vim
+
+" allow next/bnext without 'Modified but not saved' warning
+set hidden
+set number relativenumber
+set incsearch hlsearch ignorecase smartcase
+set autoindent
+set numberwidth=2
+set history=1000
+
+set wildmenu wildmode=full
+
+set tabstop=2 shiftwidth=2 softtabstop=2 shiftround
+
+let mapleader = " "
+
+nnoremap <silent> <Leader><Leader> <Cmd>wa<CR>
+nnoremap <silent> <Leader>ev :vsplit $MYVIMRC<CR>
+nnoremap <Leader>sv :source $MYVIMRC<CR>
+
+nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<CR>
+nnoremap <silent> [B :bfirst<CR>
+nnoremap <silent> ]B :blast<CR>
+
+inoremap <silent> <Esc> <Esc><Cmd>nohl<CR>
+nnoremap <silent> <Esc> <Cmd>nohl<CR>
+
+cnoremap <expr> %% getcmdtype( ) == ':' ? expand('%:h').'/' : '%%'
+
+" iabbrev
+iabbrev @mail@ aimixsaka@gmail.com
+iabbrev @web@ amx.moe
+" typo
+iabbrev nowarp nowrap
+
+" autocmd
+augroup autoindent
+	autocmd!
+	autocmd BufWritePre *.html :normal gg=G
+augroup END
+
+augroup indent
+	autocmd FileType c setlocal cindent shiftwidth=4
+augroup END
+
+autocmd FileType c nnoremap <buffer>  I/* <Esc>g_a */<Esc>
+autocmd BufNewFile,BufRead *.html setlocal nowrap
+
+" we need a cat :)
+" echo ">^.^<"
