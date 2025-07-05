@@ -5,6 +5,7 @@
    ; "fennel_ls"
    "lua_ls"
    "jsonls"
+   "nil_ls" ;; nix
    "yamlls"
    "marksman"
    "html"
