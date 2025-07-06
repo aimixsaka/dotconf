@@ -117,7 +117,7 @@
 
  (tx "neovim/nvim-lspconfig"
    {:lazy false
-    :dependencies ["williamboman/mason-lspconfig.nvim" "hrsh7th/cmp-nvim-lsp" "stevearc/conform.nvim"]
+    :dependencies ["williamboman/mason-lspconfig.nvim" "stevearc/conform.nvim"]
     :keys [(tx "<leader>ld" "<CMD>Telescope lsp_definitions<CR>" {:desc "LSP definition"})
            (tx "<leader>lu" "<CMD>Telescope lsp_implementations<CR>" {:desc "LSP implementations"})
            (tx "<leader>lt" "<CMD>Telescope lsp_type_definitions<CR>" {:desc "LSP type definitions"})
