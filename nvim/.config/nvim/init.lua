@@ -1,6 +1,6 @@
 -- [nfnl] init.fnl
 vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+vim.g.maplocalleader = "\\"
 vim.o.ignorecase = true
 vim.o.smartcase = true
 vim.o.splitright = true

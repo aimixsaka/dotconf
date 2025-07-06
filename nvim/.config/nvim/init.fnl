@@ -1,6 +1,6 @@
 ;;; Options
 (set vim.g.mapleader " ")
-(set vim.g.maplocalleader ",")
+(set vim.g.maplocalleader "\\")
 (set vim.o.ignorecase true)
 (set vim.o.smartcase true)
 (set vim.o.splitright true)
