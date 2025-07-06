@@ -33,15 +33,13 @@
 
 ;;; Mappings
 
-;; Renamed <localleader> to ,
-;; This allows us to keep the , behaviour with a \ instead
-(vim.keymap.set "n" "\\" ",")
-
-(vim.keymap.set "i" "jk" "<esc>")
 (vim.keymap.set "n" "<leader>q" "<CMD>quit<CR>" {:desc ":quit"})
-(vim.keymap.set "n" "\\" "<CMD>split<CR>" {:desc ":split"})
+(vim.keymap.set "n" "-" "<CMD>split<CR>" {:desc ":split"})
 (vim.keymap.set "n" "|" "<CMD>vsplit<CR>" {:desc ":vsplit"})
 (vim.keymap.set "n" "<leader>bw" "<CMD>w<CR>" {:desc "Write the buffer"})
+
+;; copy to system clipboard
+(vim.keymap.set "v" "<leader>y" "\"+y" {:desc "copy to system clipboard"})
 
 (vim.keymap.set "n" "<leader>sc" "<CMD>nohlsearch<CR>"
   {:desc "Clear search highlight"})
