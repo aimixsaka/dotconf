@@ -10,6 +10,8 @@
 (set vim.o.spell true)
 (set vim.o.termguicolors true)
 (set vim.o.exrc true)
+(set vim.o.number true)
+(set vim.o.relativenumber true)
 
 ;;; Diagnostics
 (fn toggle-diagnostic-lines []
