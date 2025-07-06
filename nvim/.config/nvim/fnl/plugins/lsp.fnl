@@ -3,9 +3,11 @@
 (local lsps
   ["clojure_lsp"
    ; "fennel_ls"
+   "nim_langserver"
    "lua_ls"
    "jsonls"
    "nil_ls" ;; nix
+   "clangd"
    "yamlls"
    "marksman"
    "html"
