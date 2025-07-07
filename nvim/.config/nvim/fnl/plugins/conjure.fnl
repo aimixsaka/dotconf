@@ -4,4 +4,6 @@
 (set vim.g.conjure#mapping#doc_word "K")
 
 (tx "Olical/conjure"
-  {:event "VeryLazy"})
+  {:event "VeryLazy"
+   :init (fn []
+           (set vim.g.conjure#log#hud#enabled false))})
