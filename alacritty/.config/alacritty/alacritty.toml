@@ -24,5 +24,5 @@ opacity = 1
 
 [keyboard]
 bindings = [
-  { key = "F1", mods = "Command | Control | Option | Super | Shift | Alt", mode = "AppCursor|AppKeypad|Search|Vi", action = "ToggleViMode" },
+  { key = "LBracket", mods = "Control", chars = "\u001b" }
 ]
