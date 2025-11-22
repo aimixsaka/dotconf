@@ -1,12 +1,32 @@
-theme = "onedarker"
+theme = "catppuccin_latte"
 
 [editor]
 line-number = "relative"
 
 [editor.cursor-shape]
+normal ="block"
 insert = "bar"
+select = "underline"
 
-[keys.insert]
-"C-[" = "normal_mode"
+[keys.normal]
+C-j = "copy_selection_on_next_line"
+C-k = "copy_selection_on_prev_line"
+"C-`" = "switch_to_uppercase"
+"C-;" = "flip_selections"
+"C-s" = "split_selection_on_newline"
+"C-v" = "save_selection"
+"C-e" = "move_parent_node_end"
+"C-b" = "move_parent_node_start"
+"C-minus" = "merge_selections"
+"C-_" = "merge_consecutive_selections"
+"C-p" = "remove_primary_selection"
+"C-l" = "keep_primary_selection"
 [keys.select]
-"C-[" = "normal_mode"
+# "C-s" = ""
+# tree sitter related
+[keys.normal."C-t"]
+a = "select_all_siblings"
+o = "expand_selection"
+
+[keys.normal.space]
+"space" = ":write-all"
