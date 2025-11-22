@@ -2,7 +2,7 @@ config.load_autoconfig(False)
 
 c.content.pdfjs = True
 c.zoom.default = "130%"
-c.editor.command = ["ghostty", "-e", "vis", "{file}"]
+c.editor.command = ["alacritty", "-e", "hx", "{file}"]
 c.auto_save.session = True
 c.spellcheck.languages = ["en-US"]
 c.tabs.position = "left"
