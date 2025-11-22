@@ -259,6 +259,7 @@ layout {
 // Or, if you built it by hand:
 // spawn-at-startup "~/path/to/code/target/release/xwayland-satellite"
 spawn-at-startup "easyeffects --gapplication-service"
+spawn-at-startup "fcitx5"
 
 environment {
     DISPLAY ":0"
@@ -579,6 +580,8 @@ binds {
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
+    Mod+S { screenshot; }
+    Mod+Shift+S { screenshot-window; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here
